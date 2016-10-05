@@ -1,0 +1,17 @@
+---
+version: '2'
+services:
+  logstash:
+    build:
+      context: build/logstash
+      args:
+        LOGSTASH_VERSION: "${LOGSTASH_VERSION}"
+    image: "logstash:${LOGSTASH_VERSION}"
+
+  # tester:
+  #   build:
+  #     context: build/python
+  #   command: py.test
+  #   image: "tester:latest"
+  #   links:
+  #     - logstash
