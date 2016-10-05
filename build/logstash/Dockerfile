@@ -16,5 +16,7 @@ RUN deluser elasticsearch 2>/dev/null || true; \
     adduser -D -u 1000 -h /opt/logstash logstash && \
     chown -R logstash /opt/logstash
 
+ADD config/stdin-stdout-rubydebug.conf /opt/logstash/conf.d/
+
 USER logstash
-CMD logstash
+CMD logstash -f /opt/logstash/conf.d/
