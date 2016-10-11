@@ -1,7 +1,7 @@
 ## Description
 
 This repository contains the current work in progress towards an official
-Logstash image from by Elastic Inc.
+Logstash image from Elastic Inc.
 
 Experimentation and feedback are warmly encouraged, but please don't use this
 image in a production context. It's still under heavy development, and could
