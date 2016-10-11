@@ -1,10 +1,15 @@
 ## Description
 
-This is the official Logstash image created by Elastic Inc.
+This repository contains the current work in progress towards an official
+Logstash image from by Elastic Inc.
+
+Experimentation and feedback are warmly encouraged, but please don't use this
+image in a production context. It's still under heavy development, and could
+change significantly before official release.
 
 ## Image tags and hosting
 
-The image is hosted in Elastic's own docker registry: `docker.elastic.co/elasticsearch`
+The image is hosted in Elastic's own docker registry: `docker.elastic.co/logstash`
 
 Available tags:
 
