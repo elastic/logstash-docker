@@ -96,7 +96,7 @@ By default, Logstash logs go to standard output.
 ### Operational notes
 
 1. Use the env var `LS_JAVA_OPTS` to set heap size, e.g. to use 16GB
-   use `-e LS_JAVA_OPTS="-Xms16g -Xmx=16g"` with `docker run`. It is
+   use `-e LS_JAVA_OPTS="-Xms16g -Xmx16g"` with `docker run`. It is
    also recommended to set a memory limit for the container.
 
 2. It is recommended to pin your deployments to a specific version of
