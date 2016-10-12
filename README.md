@@ -14,7 +14,8 @@ The image is hosted in Elastic's own docker registry: `docker.elastic.co/logstas
 Available tags:
 
 - 5.0.0-beta1
-- latest -> 5.0.0-beta1
+- 5.0.0-rc1
+- latest -> 5.0.0-rc1
 
 ## Using the image
 
@@ -22,7 +23,7 @@ To save some keystrokes first set:
 
 ``` shell
 export ELASTIC_REG=docker.elastic.co/logstash
-export LOGSTASH_VERSION=5.0.0-beta1
+export LOGSTASH_VERSION=5.0.0-rc1
 export LOGSTASH_IMAGE=$ELASTIC_REG/logstash:$LOGSTASH_VERSION
 ```
 
@@ -51,7 +52,7 @@ config that simply echoes `stdin` to `stdout`, through the `rubydebug`
 codec. Like this:
 
 ```
-$ docker run -it $ELASTIC_REG/logstash:5.0.0-beta1
+$ docker run -it $ELASTIC_REG/logstash:5.0.0-rc1
 The stdin plugin is now waiting for input:
 [2016-10-05T05:05:20,297][INFO ][logstash.pipeline        ] Starting pipeline {"id"=>"main", "pipeline.workers"=>8, "pipeline.batch.size"=>125, "pipeline.batch.delay"=>5, "pipeline.max_inflight"=>1000}
 [2016-10-05T05:05:20,301][INFO ][logstash.pipeline        ] Pipeline main started
