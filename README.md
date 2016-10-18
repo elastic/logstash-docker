@@ -19,7 +19,7 @@ Available tags:
 
 ## Using the image
 
-To save some keystrokes first set:
+To save some keystrokes, first set:
 
 ``` shell
 export ELASTIC_REG=docker.elastic.co/logstash
@@ -65,8 +65,10 @@ Hi! I am typing this.
        "message" => "Hi! I am typing this."
 }
 ```
+This configuration is baked into the image at `/opt/logstash/conf.d/logstash.conf`.
 If this is the behaviour that you are observing, ensure that your
-pipeline configuration is getting picked up correctly.
+pipeline configuration is getting picked up correctly, and that you are replacing
+either `logstash.conf` or the entire `conf.d` directory.
 
 
 #### Settings Files
