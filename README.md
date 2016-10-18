@@ -7,6 +7,21 @@ Experimentation and feedback are warmly encouraged, but please don't use this
 image in a production context. It's still under heavy development, and could
 change significantly before official release.
 
+## Quickstart
+Clone this repository and run `docker-compose up`. You will then have an
+example instance of Logstash running, with supporting containers running
+[Elasticsearch][elasticsearch-docker] for storing events, and
+[Kibana][kibana-docker] for visualizing them.
+
+The example container creates Logstash [heartbeat][heartbeat-input]
+events every few seconds.  To see them in Kibana, point a browser at
+`http://localhost:5601`, and log in as the `elastic` user, with the
+password `changeme`.
+
+[elasticsearch-docker]: https://github.com/elastic/elasticsearch-docker
+[kibana-docker]: https://github.com/elastic/kibana-docker
+[heartbeat-input]: https://www.elastic.co/guide/en/logstash/5.0/plugins-inputs-heartbeat.html
+
 ## Image tags and hosting
 
 The image is hosted in Elastic's own docker registry: `docker.elastic.co/logstash`
