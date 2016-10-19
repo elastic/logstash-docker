@@ -9,22 +9,25 @@ RUN apt-get update && \
     apt-get install -y curl netbase openjdk-8-jdk-headless && \
     apt-get clean
 
-# Provide a non-root user to run Logstash.
-RUN adduser --disabled-password --gecos=logstash --uid=1000 logstash
-
 # Add Logstash itself.
 RUN curl -so - https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz | \
     tar zxf - -C /opt && \
     mv /opt/logstash-${LOGSTASH_VERSION} /opt/logstash && \
-    chown --recursive logstash:logstash /opt/logstash
-ENV PATH=/opt/logstash/bin:$PATH
+    ln -s /opt/logstash/ /logstash
+ENV PATH=/logstash/bin:$PATH
+
+# Provide a minimal configuration, so that a simple 'docker run -it' will provide
+# a good experience.
+ADD config/stdin-stdout-rubydebug.conf /logstash/pipeline/logstash.conf
 
 # Ensure Logstash has a UTF-8 locale available.
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
 
-# Provide a minimal configuration, so that a simple 'docker run -it' will provide
-# a good experience.
-ADD config/stdin-stdout-rubydebug.conf /opt/logstash/conf.d/logstash.conf
+# Provide a non-root user to run the process.
+RUN chown --recursive 1000:1000 /opt/logstash && \
+    addgroup --gid 1000 logstash && \
+    adduser --disabled-password --gecos=logstash --uid=1000 --gid=1000 --home /logstash logstash
 USER logstash
-CMD ["logstash", "-f", "/opt/logstash/conf.d/"]
+
+CMD ["logstash", "-f", "/logstash/pipeline/"]

@@ -51,12 +51,12 @@ Logstash differentiates between two types of configuration:
 
 It's essential to place your pipeline configuration where it can be
 found by Logstash. By default, the container will look in
-`/opt/logstash/conf.d/` for pipeline config files.
+`/logstash/pipeline/` for pipeline config files.
 
 In this example we use a bind-mounted volume to provide the configs:
 
 ``` shell
-docker run -it -v /my/logstash/configs/:/opt/logstash/conf.d/ $LOGSTASH_IMAGE
+docker run -it -v /my/logstash/configs/:/logstash/pipeline/ $LOGSTASH_IMAGE
 ```
 
 Every file in the host directory `/my/logstash/configs/` will then be parsed
@@ -80,27 +80,27 @@ Hi! I am typing this.
        "message" => "Hi! I am typing this."
 }
 ```
-This configuration is baked into the image at `/opt/logstash/conf.d/logstash.conf`.
+This configuration is baked into the image at `/logstash/pipeline/logstash.conf`.
 If this is the behaviour that you are observing, ensure that your
 pipeline configuration is getting picked up correctly, and that you are replacing
-either `logstash.conf` or the entire `conf.d` directory.
+either `logstash.conf` or the entire `pipeline` directory.
 
 
 #### Settings Files
 
 We can provide settings files through bind-mounts too. Logstash expects to
-find them at `/opt/logstash/config/`.
+find them at `/logstash/config/`.
 
 It's possible to provide an entire directory, containing all needed files:
 
 ```
-docker run -it -v /my/logstash/settings/:/opt/logstash/config/ $LOGSTASH_IMAGE
+docker run -it -v /my/logstash/settings/:/logstash/config/ $LOGSTASH_IMAGE
 ```
 
 ...or just a single file
 
 ```
-docker run -it -v ~/logstash.yml:/opt/logstash/conf.d/logstash.yml $LOGSTASH_IMAGE
+docker run -it -v ~/logstash.yml:/logstash/config/logstash.yml $LOGSTASH_IMAGE
 ```
 
 [conf-types]: https://www.elastic.co/guide/en/logstash/5.0/config-setting-files.html

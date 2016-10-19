@@ -5,9 +5,9 @@ services:
     build:
       context: build/logstash
       args: { LOGSTASH_VERSION: "${LOGSTASH_VERSION}" }
-    image: logstash
+    image: docker.elastic.co/logstash/logstash:${LOGSTASH_VERSION}
     volumes:
-      - ./examples/heartbeat-elasticsearch:/opt/logstash/conf.d
+      - ./examples/heartbeat-elasticsearch:/logstash/pipeline
     links: [ elasticsearch ]
 
   elasticsearch:
