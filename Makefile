@@ -6,9 +6,9 @@ endif
 export LOGSTASH_VERSION
 
 REGISTRY=docker.elastic.co
-REMOTE_IMAGE=$(REGISTRY)/logstash/logstash
-VERSION_TAG=$(REMOTE_IMAGE):$(LOGSTASH_VERSION)
-LATEST_TAG=$(REMOTE_IMAGE):latest
+IMAGE=$(REGISTRY)/logstash/logstash
+VERSION_TAG=$(IMAGE):$(LOGSTASH_VERSION)
+LATEST_TAG=$(IMAGE):latest
 
 build:
 	docker-compose build --pull
@@ -17,7 +17,6 @@ demo: build
 	docker-compose up
 
 push: build
-	docker tag logstash:$(LOGSTASH_VERSION) $(VERSION_TAG)
 	docker tag $(VERSION_TAG) $(LATEST_TAG)
 
 	docker push $(VERSION_TAG)
