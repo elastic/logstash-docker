@@ -12,7 +12,9 @@ LATEST_TAG=$(REMOTE_IMAGE):latest
 
 build:
 	docker-compose build --pull
-	docker tag logstash logstash:$(LOGSTASH_VERSION)
+
+demo: build
+	docker-compose up
 
 push: build
 	docker tag logstash:$(LOGSTASH_VERSION) $(VERSION_TAG)
