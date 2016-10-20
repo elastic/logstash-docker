@@ -19,9 +19,8 @@ Available tags:
 - `latest` -> `5.0.0-rc1`
 
 ## Quick start demo
-Clone this repository and run `make demo`. You will then have an
-example instance of Logstash running, with supporting containers running
-the following services:
+Clone this repository, ensure you
+have [docker-compose](https://docs.docker.com/compose/install/) installed if on Linux and run `make demo`. You will then have an example instance of Logstash running, with supporting containers running the following services:
 
 * [Elasticsearch][elasticsearch-docker] for storing events.
 * [Kibana][kibana-docker] for browsing and visualizing.
@@ -39,12 +38,18 @@ In Kibana, click the "Create" button, then the "Discover" tab in the
 left-hand navigation pane.
 
 ### Redis input
-If you have the [redis-cli][redis-cli] installed, you can try injecting messages into Redis,
+You can also telnet/nc to the redis port and try injecting messages into Redis (alternatively, use [redis-cli](http://redis.io/topics/quickstart)),
 which Logstash will then ingest into Elasticsearch. Like this:
 
 ``` shell
-redis-cli LPUSH logstash "I travelled from Redis to meet you."
+$ telnet 127.0.0.1 6379
+Trying 127.0.0.1...
+Connected to 127.0.0.1.
+Escape character is '^]'.
+LPUSH logstash "I travelled from Redis to meet you."
+:1
 ```
+
 Of course, the Redis input in entirely optional. We simply show it here as one
 example of the [many ways to ingest data with Logstash][ls-inputs].
 
