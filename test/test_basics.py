@@ -1,9 +1,9 @@
-from helpers import environment, run, stdout_of
+from helpers import environment, stdout_of, stderr_of
 from constants import java_version_string, logstash_version_string
 
 
 def test_java_is_the_correct_version():
-    assert java_version_string in run('java -version').stderr.decode()
+    assert java_version_string in stderr_of('java -version')
 
 
 def test_logstash_is_the_correct_version():

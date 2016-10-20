@@ -17,9 +17,15 @@ def stdout_of(command):
     return(run(command).stdout.decode())
 
 
+def stderr_of(command):
+    return(run(command).stderr.decode())
+
+
 def environment(varname):
     environ = {}
     for line in run('env').stdout.decode().split("\n"):
         var, value = line.split('=')
         environ[var] = value
     return environ[varname]
+
+
