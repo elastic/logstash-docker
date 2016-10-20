@@ -22,7 +22,7 @@ build:
 	docker-compose build --pull
 
 demo: clean-docker build
-	docker-compose up
+	docker-compose --file docker-compose.demo.yml up
 
 push: build test
 	docker tag $(VERSION_TAG) $(LATEST_TAG)

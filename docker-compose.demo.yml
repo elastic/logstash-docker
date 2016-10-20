@@ -1,0 +1,23 @@
+---
+version: '2'
+services:
+  logstash:
+    build:
+      context: build/logstash
+      args: { LOGSTASH_VERSION: "${LOGSTASH_VERSION}" }
+    image: docker.elastic.co/logstash/logstash:${LOGSTASH_VERSION}
+    volumes:
+      - ./examples/heartbeat-elasticsearch:/logstash/pipeline
+    links: [ elasticsearch ]
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${LOGSTASH_VERSION}
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${LOGSTASH_VERSION}
+    ports: [ "5601:5601" ]
+    links: [ elasticsearch ]
