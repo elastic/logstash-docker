@@ -7,8 +7,7 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:${LOGSTASH_VERSION}
     volumes:
-      - ./examples/elastic-stack-demo:/logstash/pipeline
-      - /var/log:/mnt/log
+      - ./examples/elastic-stack-demo:/usr/share/logstash/pipeline
     links:
       - elasticsearch
       - redis
