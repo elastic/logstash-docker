@@ -27,13 +27,15 @@ in the left-hand navigation pane.
 
 ## Image tags and hosting
 
-The image is hosted in Elastic's own docker registry: `docker.elastic.co/logstash`
+The image is hosted in Elastic's own docker registry at `docker.elastic.co`.
+
+The full path for this image is `docker.elastic.co/logstash/logstash`.
 
 Available tags:
 
-- 5.0.0-beta1
-- 5.0.0-rc1
-- latest -> 5.0.0-rc1
+- `5.0.0-beta1`
+- `5.0.0-rc1`
+- `latest` -> `5.0.0-rc1`
 
 ## Using the image
 
