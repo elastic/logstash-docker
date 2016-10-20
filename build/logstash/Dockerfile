@@ -11,25 +11,25 @@ RUN apt-get update && \
 
 # Add Logstash itself.
 RUN curl -so - https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz | \
-    tar zxf - -C /opt && \
-    mv /opt/logstash-${LOGSTASH_VERSION} /opt/logstash && \
-    ln -s /opt/logstash/ /logstash
-ENV PATH=/logstash/bin:$PATH
+    tar zxf - -C /usr/share && \
+    mv /usr/share/logstash-${LOGSTASH_VERSION} /usr/share/logstash && \
+    ln -s /usr/share/logstash /opt/logstash
+ENV PATH=/usr/share/logstash/bin:$PATH
 
 # Provide a minimal configuration, so that a simple incocations will provide
 # a good experience.
-ADD config/logstash.yml /logstash/config/
-ADD config/log4j2.properties /logstash/config/
-ADD pipeline/default.conf /logstash/pipeline/logstash.conf
+ADD config/logstash.yml /usr/share/logstash/config/
+ADD config/log4j2.properties /usr/share/logstash/config/
+ADD pipeline/default.conf /usr/share/logstash/pipeline/logstash.conf
 
 # Ensure Logstash has a UTF-8 locale available.
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
 
 # Provide a non-root user to run the process.
-RUN chown --recursive 1000:1000 /opt/logstash && \
+RUN chown --recursive 1000:1000 /usr/share/logstash && \
     addgroup --gid 1000 logstash && \
-    adduser --disabled-password --gecos=logstash --uid=1000 --gid=1000 --home /logstash logstash
+    adduser --disabled-password --gecos=logstash --uid=1000 --gid=1000 --home /usr/share/logstash logstash
 USER logstash
 
-CMD ["logstash", "-f", "/logstash/pipeline/"]
+CMD ["logstash", "-f", "/usr/share/logstash/pipeline/"]
