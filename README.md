@@ -3,7 +3,7 @@
 This repository contains the official [Logstash][logstash] Docker image from
 [Elastic][elastic].
 
-I currently provides a release candidate version of Logstash 5.0, and is thus
+It currently provides a release candidate version of Logstash 5.0, and is thus
 not recommended for production use.
 
 ## Image tags and hosting
