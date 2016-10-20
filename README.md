@@ -130,8 +130,6 @@ The images have been tested on Docker 1.12.1.
 
 ## Contributing, issues and testing
 
-This image is built on top of [elasticsearch-alpine-base][es-base]
-which is derived from [alpine:latest][alpine].
+This image is built on [Ubuntu 16.04][ubuntu-1604].
 
-[es-base]: https://github.com/elastic/elasticsearch-alpine-base
-[alpine]: https://hub.docker.com/_/alpine/
+[ubuntu-1604]: https://github.com/tianon/docker-brew-ubuntu-core/blob/188bcceb999c0c465b3053efefd4e1a03d3fc47e/xenial/Dockerfile
