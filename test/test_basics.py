@@ -37,3 +37,7 @@ def test_logstash_user_is_uid_1000():
 
 def test_logstash_user_is_gid_1000():
     assert stdout_of('id -g logstash') == '1000'
+
+
+def test_logging_config_does_not_log_to_files():
+    assert stdout_of('grep RollingFile /logstash/config/log4j2.properties') == ''

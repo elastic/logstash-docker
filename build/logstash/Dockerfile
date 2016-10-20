@@ -16,9 +16,11 @@ RUN curl -so - https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTA
     ln -s /opt/logstash/ /logstash
 ENV PATH=/logstash/bin:$PATH
 
-# Provide a minimal configuration, so that a simple 'docker run -it' will provide
+# Provide a minimal configuration, so that a simple incocations will provide
 # a good experience.
-ADD config/stdin-stdout-rubydebug.conf /logstash/pipeline/logstash.conf
+ADD config/logstash.yml /logstash/config/
+ADD config/log4j2.properties /logstash/config/
+ADD pipeline/default.conf /logstash/pipeline/logstash.conf
 
 # Ensure Logstash has a UTF-8 locale available.
 RUN locale-gen en_US.UTF-8
