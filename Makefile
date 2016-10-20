@@ -10,13 +10,21 @@ IMAGE=$(REGISTRY)/logstash/logstash
 VERSION_TAG=$(IMAGE):$(LOGSTASH_VERSION)
 LATEST_TAG=$(IMAGE):latest
 
+test: # build
+	test -d venv || virtualenv --python=python3.5 venv
+	( \
+	  source venv/bin/activate; \
+	  pip install -r test/requirements.txt; \
+	  py.test test/ \
+	)
+
 build:
 	docker-compose build --pull
 
-demo: build
+demo: clean-docker build
 	docker-compose up
 
-push: build
+push: test
 	docker tag $(VERSION_TAG) $(LATEST_TAG)
 
 	docker push $(VERSION_TAG)
@@ -26,4 +34,4 @@ clean-docker:
 	docker-compose down
 	docker-compose rm --force
 
-.PHONY: build push
+.PHONY: build push test
