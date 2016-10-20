@@ -1,23 +1,35 @@
 ---
+# A demonstration of running Logstash in Docker, with Elasticsearch, Kibana
+# and various example Logstash input plugins.
+
 version: '2'
 services:
   logstash:
-    build:
-      context: build/logstash
-      args: { LOGSTASH_VERSION: "${LOGSTASH_VERSION}" }
     image: docker.elastic.co/logstash/logstash:${LOGSTASH_VERSION}
     volumes:
-      - ./examples/heartbeat-elasticsearch:/logstash/pipeline
-    links: [ elasticsearch ]
+      - ./examples/elastic-stack-demo:/logstash/pipeline
+      - /var/log:/mnt/log
+    links:
+      - elasticsearch
+      - redis
     ports:
-      - "5044:5044"
-      - "9600:9600"
+      # Beats input -- https://www.elastic.co/guide/en/logstash/5.0/plugins-inputs-beats.html
+      - '5044:5044'
 
+      # UDP input -- https://www.elastic.co/guide/en/logstash/master/plugins-inputs-udp.html#plugins-inputs-udp-codec
+      - '43448:43448/udp'
+
+      # Monitoring APIs -- https://www.elastic.co/guide/en/logstash/5.0/monitoring.html
+      - '9600:9600'
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${LOGSTASH_VERSION}
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${LOGSTASH_VERSION}
-    ports: [ "5601:5601" ]
+    ports: [ '5601:5601' ]
     links: [ elasticsearch ]
+
+  redis:
+    image: redis
+    ports: [ '6379:6379' ]

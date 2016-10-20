@@ -6,7 +6,7 @@ docker_image = 'docker.elastic.co/logstash/logstash:' + version
 
 
 def run(command):
-    cli = ['docker', 'run', '--interactive', docker_image] + command.split()
+    cli = ['docker', 'run', '--rm', '--interactive', docker_image] + command.split()
     print(' '.join(cli))
     result = subprocess.run(cli, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     result.stdout = result.stdout.rstrip()
@@ -27,5 +27,3 @@ def environment(varname):
         var, value = line.split('=')
         environ[var] = value
     return environ[varname]
-
-

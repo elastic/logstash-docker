@@ -1,29 +1,10 @@
 ## Description
 
-This repository contains the current work in progress towards an official
-Logstash image from Elastic Inc.
+This repository contains the official [Logstash][logstash] Docker image from
+[Elastic][elastic].
 
-Experimentation and feedback are warmly encouraged, but please don't use this
-image in a production context. It's still under heavy development, and could
-change significantly before official release.
-
-## Quickstart
-Clone this repository and run `make demo`. You will then have an
-example instance of Logstash running, with supporting containers running
-[Elasticsearch][elasticsearch-docker] for storing events, and
-[Kibana][kibana-docker] for visualizing them.
-
-The example container creates Logstash [heartbeat][heartbeat-input]
-events every few seconds.  To see them in Kibana, point a browser at
-`http://localhost:5601`, and log in as the `elastic` user, with the
-password `changeme`.
-
-Once logged in to Kibana, click the "Create" button, then the "Discover" tab
-in the left-hand navigation pane.
-
-[elasticsearch-docker]: https://github.com/elastic/elasticsearch-docker
-[kibana-docker]: https://github.com/elastic/kibana-docker
-[heartbeat-input]: https://www.elastic.co/guide/en/logstash/5.0/plugins-inputs-heartbeat.html
+I currently provides a release candidate version of Logstash 5.0, and is thus
+not recommended for production use.
 
 ## Image tags and hosting
 
@@ -36,6 +17,74 @@ Available tags:
 - `5.0.0-beta1`
 - `5.0.0-rc1`
 - `latest` -> `5.0.0-rc1`
+
+## Quick start demo
+Clone this repository and run `make demo`. You will then have an
+example instance of Logstash running, with supporting containers running
+the following services:
+
+* [Elasticsearch][elasticsearch-docker] for storing events.
+* [Kibana][kibana-docker] for browsing and visualizing.
+* Redis as a simple example of consuming data from other services.
+
+### Example events
+The demo container creates [heartbeat][heartbeat-input]
+events every few seconds.  To see them in Kibana, point a browser at
+`http://localhost:5601`, and log in with:
+
+* Username: `elastic`
+* Password: `changeme`.
+
+In Kibana, click the "Create" button, then the "Discover" tab in the
+left-hand navigation pane.
+
+### Redis input
+If you have the [redis-cli][redis-cli] installed, you can try injecting messages into Redis,
+which Logstash will then ingest into Elasticsearch. Like this:
+
+``` shell
+redis-cli LPUSH logstash "I travelled from Redis to meet you."
+```
+Of course, the Redis input in entirely optional. We simply show it here as one
+example of the [many ways to ingest data with Logstash][ls-inputs].
+
+### Monitoring APIs
+New in Logstash 5.0, the [monitoring APIs][mon-apis] are available on port 9600:
+
+``` shell
+$ curl localhost:9600?pretty
+{
+  "host" : "8e8471b3e92f",
+  "version" : "5.0.0-rc1",
+  "http_address" : "0.0.0.0:9600",
+  "build_date" : "2016-10-07T15:39:28+00:00",
+  "build_sha" : "a02ab45df9385477e9d4a7c05bf2b1261edf9591",
+  "build_snapshot" : false
+}
+```
+
+### How does it work?
+If you're curious about the demo configuration, you can see how it's defined
+in:
+* [docker-compose.demo.yml](./docker-compose.demo.yml)
+* [examples/elastic-stack-demo/logstash.conf](./examples/elastic-stack-demo/logstash.conf)
+
+[logstash]: https://www.elastic.co/products/logstash
+[elastic]: https://www.elastic.co
+[elasticsearch-docker]: https://github.com/elastic/elasticsearch-docker
+[kibana-docker]: https://github.com/elastic/kibana-docker
+[heartbeat-input]: https://www.elastic.co/guide/en/logstash/5.0/plugins-inputs-heartbeat.html
+[redis-cli]: http://redis.io/topics/rediscli
+[ls-inputs]: https://www.elastic.co/guide/en/logstash/5.0/input-plugins.html
+[mon-apis]: https://www.elastic.co/guide/en/logstash/5.0/monitoring.html
+
+### UDP input
+The demo system will also accept arbitrary messages over UDP port 43448. One
+to try it out is with Netcat, like so:
+
+``` shell
+echo 'I ride a horse called "UDP"' | nc -q1 -u localhost 43448
+```
 
 ## Using the image
 
