@@ -4,8 +4,7 @@ services:
   logstash:
     build:
       context: build/logstash
-      args: { LOGSTASH_VERSION: "${LOGSTASH_VERSION}" }
-    image: docker.elastic.co/logstash/logstash:${LOGSTASH_VERSION}
-    ports:
-      - "5044:5044"
-      - "9600:9600"
+      args:
+        LOGSTASH_VERSION: "${LOGSTASH_VERSION}"
+        LOGSTASH_DOWNLOAD_URL: "${LOGSTASH_DOWNLOAD_URL}"
+    image: "${VERSIONED_IMAGE}"

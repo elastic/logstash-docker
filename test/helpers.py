@@ -1,8 +1,11 @@
 import subprocess
 import os
 
-version = os.environ['LOGSTASH_VERSION']
-docker_image = 'docker.elastic.co/logstash/logstash:' + version
+version_tag = os.environ['LOGSTASH_VERSION']
+if os.environ['STAGING_BUILD_NUM']:
+    version_tag += '-'
+    version_tag += os.environ['STAGING_BUILD_NUM']
+docker_image = 'docker.elastic.co/logstash/logstash:' + version_tag
 
 
 def run(command):
