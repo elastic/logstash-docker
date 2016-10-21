@@ -2,9 +2,11 @@ import subprocess
 import os
 
 version_tag = os.environ['LOGSTASH_VERSION']
-if os.environ['STAGING_BUILD_NUM']:
-    version_tag += '-'
-    version_tag += os.environ['STAGING_BUILD_NUM']
+try:
+    version_tag += '-%s' % os.environ['STAGING_BUILD_NUM']
+except KeyError:
+    pass
+
 docker_image = 'docker.elastic.co/logstash/logstash:' + version_tag
 
 
