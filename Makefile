@@ -19,6 +19,7 @@ LATEST_IMAGE=$(IMAGE):latest
 export LOGSTASH_VERSION
 export LOGSTASH_DOWNLOAD_URL
 export VERSIONED_IMAGE
+export VERSION_TAG
 
 test: build
 	test -d venv || virtualenv --python=python3.5 venv
