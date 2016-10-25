@@ -45,7 +45,7 @@ push: build test
 	  docker push $(LATEST_IMAGE); \
 	fi
 
-clean:
+clean: clean-demo
 	docker-compose down
 	docker-compose rm --force
 
