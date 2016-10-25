@@ -5,6 +5,6 @@ services:
     build:
       context: build/logstash
       args:
-        LOGSTASH_VERSION: "${LOGSTASH_VERSION}"
+        ELASTIC_VERSION: "${ELASTIC_VERSION}"
         LOGSTASH_DOWNLOAD_URL: "${LOGSTASH_DOWNLOAD_URL}"
     image: "${VERSIONED_IMAGE}"

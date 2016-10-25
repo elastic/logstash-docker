@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 MAINTAINER Elastic Docker Team <docker@elastic.co>
 
-ARG LOGSTASH_VERSION
+ARG ELASTIC_VERSION
 ARG LOGSTASH_DOWNLOAD_URL
 
 # Install curl for downloading, Java for running Logstash/JRuby, and netbase
@@ -13,7 +13,7 @@ RUN apt-get update && \
 # Add Logstash itself.
 RUN curl -Lso - ${LOGSTASH_DOWNLOAD_URL} | \
     tar zxf - -C /usr/share && \
-    mv /usr/share/logstash-${LOGSTASH_VERSION} /usr/share/logstash && \
+    mv /usr/share/logstash-${ELASTIC_VERSION} /usr/share/logstash && \
     ln -s /usr/share/logstash /opt/logstash
 ENV PATH=/usr/share/logstash/bin:$PATH
 
