@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-version_tag = os.environ['LOGSTASH_VERSION']
+version_tag = os.environ['ELASTIC_VERSION']
 try:
     version_tag += '-%s' % os.environ['STAGING_BUILD_NUM']
 except KeyError:

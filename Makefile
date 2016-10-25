@@ -1,14 +1,14 @@
 SHELL=/bin/bash
-ifndef LOGSTASH_VERSION
-LOGSTASH_VERSION=5.0.0-rc1
+ifndef ELASTIC_VERSION
+ELASTIC_VERSION=5.0.0-rc1
 endif
 
 ifdef STAGING_BUILD_NUM
-VERSION_TAG=$(LOGSTASH_VERSION)-${STAGING_BUILD_NUM}
-LOGSTASH_DOWNLOAD_URL=http://staging.elastic.co/$(VERSION_TAG)/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz
+VERSION_TAG=$(ELASTIC_VERSION)-${STAGING_BUILD_NUM}
+LOGSTASH_DOWNLOAD_URL=http://staging.elastic.co/$(VERSION_TAG)/downloads/logstash/logstash-${ELASTIC_VERSION}.tar.gz
 else
-VERSION_TAG=$(LOGSTASH_VERSION)
-LOGSTASH_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz
+VERSION_TAG=$(ELASTIC_VERSION)
+LOGSTASH_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/logstash/logstash-${ELASTIC_VERSION}.tar.gz
 endif
 
 REGISTRY=docker.elastic.co
@@ -16,7 +16,7 @@ IMAGE=$(REGISTRY)/logstash/logstash
 VERSIONED_IMAGE=$(IMAGE):$(VERSION_TAG)
 LATEST_IMAGE=$(IMAGE):latest
 
-export LOGSTASH_VERSION
+export ELASTIC_VERSION
 export LOGSTASH_DOWNLOAD_URL
 export VERSIONED_IMAGE
 export VERSION_TAG
@@ -33,9 +33,7 @@ build:
 	echo $(LOGSTASH_DOWNLOAD_URL)
 	docker-compose build --pull
 
-demo:
-	docker-compose --file docker-compose.demo.yml down
-	docker-compose --file docker-compose.demo.yml rm --force
+demo: clean-demo
 	docker-compose --file docker-compose.demo.yml up
 
 push: build test
@@ -47,4 +45,12 @@ push: build test
 	  docker push $(LATEST_IMAGE); \
 	fi
 
-.PHONY: build demo push test
+clean:
+	docker-compose down
+	docker-compose rm --force
+
+clean-demo:
+	docker-compose --file docker-compose.demo.yml down
+	docker-compose --file docker-compose.demo.yml rm --force
+
+.PHONY: build clean clean-demo demo push test

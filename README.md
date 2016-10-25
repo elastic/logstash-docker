@@ -97,8 +97,8 @@ To save some keystrokes, first set:
 
 ``` shell
 export ELASTIC_REG=docker.elastic.co/logstash
-export LOGSTASH_VERSION=5.0.0-rc1
-export LOGSTASH_IMAGE=$ELASTIC_REG/logstash:$LOGSTASH_VERSION
+export ELASTIC_VERSION=5.0.0-rc1
+export LOGSTASH_IMAGE=$ELASTIC_REG/logstash:$ELASTIC_VERSION
 ```
 
 ### Configuration
