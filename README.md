@@ -14,9 +14,8 @@ The full path for this image is `docker.elastic.co/logstash/logstash`.
 
 Available tags:
 
-- `5.0.0-beta1`
-- `5.0.0-rc1`
-- `latest` -> `5.0.0-rc1`
+- `5.0.0`
+- `latest` -> `5.0.0`
 
 ## Quick start demo
 Clone this repository, ensure you
@@ -75,7 +74,7 @@ New in Logstash 5.0, the [monitoring APIs][mon-apis] are available on port 9600:
 $ curl localhost:9600?pretty
 {
   "host" : "8e8471b3e92f",
-  "version" : "5.0.0-rc1",
+  "version" : "5.0.0",
   "http_address" : "0.0.0.0:9600",
   "build_date" : "2016-10-07T15:39:28+00:00",
   "build_sha" : "a02ab45df9385477e9d4a7c05bf2b1261edf9591",
@@ -104,7 +103,7 @@ To save some keystrokes, first set:
 
 ``` shell
 export ELASTIC_REG=docker.elastic.co/logstash
-export ELASTIC_VERSION=5.0.0-rc1
+export ELASTIC_VERSION=5.0.0
 export LOGSTASH_IMAGE=$ELASTIC_REG/logstash:$ELASTIC_VERSION
 ```
 
