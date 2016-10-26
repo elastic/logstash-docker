@@ -3,9 +3,6 @@
 This repository contains the official [Logstash][logstash] Docker image from
 [Elastic][elastic].
 
-It currently provides a release candidate version of Logstash 5.0, and is thus
-not recommended for production use.
-
 ## Image tags and hosting
 
 The image is hosted in Elastic's own docker registry at `docker.elastic.co`.
