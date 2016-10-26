@@ -22,9 +22,13 @@ Available tags:
 Clone this repository, ensure you
 have [docker-compose](https://docs.docker.com/compose/install/) installed if on Linux and run `make demo`. You will then have an example instance of Logstash running, with supporting containers running the following services:
 
-* [Elasticsearch][elasticsearch-docker] for storing events.
+* [Elasticsearch][elasticsearch-docker] for storing events<sup>1</sup>.
 * [Kibana][kibana-docker] for browsing and visualizing.
 * Redis as a simple example of consuming data from other services.
+
+<sup>1. Running Elasticsearch may require [tuning the vm.vmax_map_count kernel parameter][tuning].</sup>
+
+[tuning]: https://github.com/elastic/elasticsearch-docker#host-prerequisites
 
 ### Example events
 The demo container creates [heartbeat][heartbeat-input]
@@ -37,9 +41,17 @@ events every few seconds.  To see them in Kibana, point a browser at
 In Kibana, click the "Create" button, then the "Discover" tab in the
 left-hand navigation pane.
 
+### UDP input
+The demo system will accept arbitrary messages over UDP port 43448. One
+way to try it out is with Netcat, like so:
+
+``` shell
+echo 'I ride a horse called "UDP"' | nc -q1 -u localhost 43448
+```
+
 ### Redis input
-You can also telnet/nc to the redis port and try injecting messages into Redis (alternatively, use [redis-cli](http://redis.io/topics/quickstart)),
-which Logstash will then ingest into Elasticsearch. Like this:
+You can also use Netcat, Telnet, or [redis-cli][redis-cli]
+to send messages to the example Redis container. For example:
 
 ``` shell
 $ telnet 127.0.0.1 6379
@@ -50,7 +62,10 @@ LPUSH logstash "I travelled from Redis to meet you."
 :1
 ```
 
-Of course, the Redis input in entirely optional. We simply show it here as one
+Logstash will then collect those message from Redis and forward them on to
+Elasticsearch.
+
+Of course, the Redis input is entirely optional. We simply show it here as an
 example of the [many ways to ingest data with Logstash][ls-inputs].
 
 ### Monitoring APIs
@@ -83,14 +98,6 @@ in:
 [ls-inputs]: https://www.elastic.co/guide/en/logstash/5.0/input-plugins.html
 [mon-apis]: https://www.elastic.co/guide/en/logstash/5.0/monitoring.html
 
-### UDP input
-The demo system will also accept arbitrary messages over UDP port 43448. One
-to try it out is with Netcat, like so:
-
-``` shell
-echo 'I ride a horse called "UDP"' | nc -q1 -u localhost 43448
-```
-
 ## Using the image
 
 To save some keystrokes, first set:
@@ -108,37 +115,32 @@ Logstash differentiates between two types of configuration:
 
 #### Pipeline Configuration
 
-It's essential to place your pipeline configuration where it can be
-found by Logstash. By default, the container will look in
+It's essential to place your pipeline configuration where it can be found by
+Logstash. By default, the container will look in
 `/usr/share/logstash/pipeline/` for pipeline config files.
 
 In this example we use a bind-mounted volume to provide the configs:
 
 ``` shell
-docker run -it -v /my/logstash/configs/:/usr/share/logstash/pipeline/ $LOGSTASH_IMAGE
+docker run --rm -it -v /my/logstash/configs/:/usr/share/logstash/pipeline/ $LOGSTASH_IMAGE
 ```
 
 Every file in the host directory `/my/logstash/configs/` will then be parsed
 by Logstash as pipeline config.
 
 If you don't provide configuration to Logstash, it will run with a minimal
-config that simply echoes `stdin` to `stdout`, through the `rubydebug`
-codec. Like this:
+config that listens for messages from the [Beats input][beats-input] and echoes any that
+are received to `stdout`. Like this:
 
 ```
-$ docker run -it $ELASTIC_REG/logstash:5.0.0-rc1
-The stdin plugin is now waiting for input:
-[2016-10-05T05:05:20,297][INFO ][logstash.pipeline        ] Starting pipeline {"id"=>"main", "pipeline.workers"=>8, "pipeline.batch.size"=>125, "pipeline.batch.delay"=>5, "pipeline.max_inflight"=>1000}
-[2016-10-05T05:05:20,301][INFO ][logstash.pipeline        ] Pipeline main started
-[2016-10-05T05:05:20,325][INFO ][logstash.agent           ] Successfully started Logstash API endpoint {:port=>9600}
-Hi! I am typing this.
-{
-    "@timestamp" => 2016-10-05T05:07:01.141Z,
-      "@version" => "1",
-          "host" => "2f773d5a7f29",
-       "message" => "Hi! I am typing this."
-}
+Sending Logstash logs to /usr/share/logstash/logs which is now configured via log4j2.properties.
+[2016-10-26T05:11:34,992][INFO ][logstash.inputs.beats    ] Beats inputs: Starting input listener {:address=>"0.0.0.0:5044"}
+[2016-10-26T05:11:35,068][INFO ][logstash.pipeline        ] Starting pipeline {"id"=>"main", "pipeline.workers"=>4, "pipeline.batch.size"=>125, "pipeline.batch.delay"=>5, "pipeline.max_inflight"=>500}
+[2016-10-26T05:11:35,078][INFO ][org.logstash.beats.Server] Starting server on port: 5044
+[2016-10-26T05:11:35,078][INFO ][logstash.pipeline        ] Pipeline main started
+[2016-10-26T05:11:35,105][INFO ][logstash.agent           ] Successfully started Logstash API endpoint {:port=>9600}
 ```
+
 This configuration is baked into the image at `/usr/share/logstash/pipeline/logstash.conf`.
 If this is the behaviour that you are observing, ensure that your
 pipeline configuration is getting picked up correctly, and that you are replacing
@@ -153,21 +155,38 @@ find them at `/usr/share/logstash/config/`.
 It's possible to provide an entire directory, containing all needed files:
 
 ```
-docker run -it -v /my/logstash/settings/:/usr/share/logstash/config/ $LOGSTASH_IMAGE
+docker run --rm -it -v /my/logstash/settings/:/usr/share/logstash/config/ $LOGSTASH_IMAGE
 ```
 
 ...or just a single file
 
 ```
-docker run -it -v ~/logstash.yml:/usr/share/logstash/config/logstash.yml $LOGSTASH_IMAGE
+docker run --rm -it -v ~/logstash.yml:/usr/share/logstash/config/logstash.yml $LOGSTASH_IMAGE
 ```
 
 [conf-types]: https://www.elastic.co/guide/en/logstash/5.0/config-setting-files.html
 
+#### Custom images
+
+Bind-mounted configuration is not the only option, naturally. If you prefer the
+_Immutable Infrastructure_ approach, you can prepare a custom image containing
+your configuration with a Dockerfile like this one:
+
+``` dockerfile
+FROM docker.elastic.co/logstash/logstash:5.0.0-ccd69424
+RUN rm -rf /usr/share/logstash/pipeline/logstash.conf
+ADD pipeline/ /usr/share/logstash/pipeline/
+ADD config/ /usr/share/logstash/confing/
+```
+
+Be sure to replace or delete `logstash.conf` in your custom image, so you don't
+retain the example config from the base image.
 
 ### Logging
 
-By default, Logstash logs go to standard output.
+By default, Logstash logs go to standard output. To change this behaviour, use
+any of techniques above to replace the file at
+`/usr/share/logstash/config/log4j2.properties`.
 
 ### Operational notes
 
