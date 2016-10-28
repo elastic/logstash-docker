@@ -32,7 +32,7 @@ events every few seconds.  To see them in Kibana, point a browser at
 `http://localhost:5601`, and log in with:
 
 * Username: `elastic`
-* Password: `changeme`.
+* Password: `changeme`
 
 In Kibana, click the "Create" button, then the "Discover" tab in the
 left-hand navigation pane.
@@ -61,7 +61,7 @@ LPUSH logstash "I travelled from Redis to meet you."
 Logstash will then collect those message from Redis and forward them on to
 Elasticsearch.
 
-Of course, the Redis input is entirely optional. We simply show it here as an
+Of course, the Redis input is entirely optional. We simply show it here as one
 example of the [many ways to ingest data with Logstash][ls-inputs].
 
 ### Monitoring APIs
@@ -142,6 +142,7 @@ If this is the behaviour that you are observing, ensure that your
 pipeline configuration is getting picked up correctly, and that you are replacing
 either `logstash.conf` or the entire `pipeline` directory.
 
+[beats-input]: https://www.elastic.co/guide/en/logstash/current/plugins-inputs-beats.html
 
 #### Settings Files
 
