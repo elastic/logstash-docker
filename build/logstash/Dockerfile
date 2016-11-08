@@ -17,7 +17,7 @@ RUN curl -Lso - ${LOGSTASH_DOWNLOAD_URL} | \
     ln -s /usr/share/logstash /opt/logstash
 ENV PATH=/usr/share/logstash/bin:$PATH
 
-# Provide a minimal configuration, so that a simple incocations will provide
+# Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
 ADD config/logstash.yml /usr/share/logstash/config/
 ADD config/log4j2.properties /usr/share/logstash/config/
