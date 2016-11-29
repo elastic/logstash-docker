@@ -39,12 +39,6 @@ demo: clean-demo
 push: build test
 	docker push $(VERSIONED_IMAGE)
 
-	# Only push latest if not a staging build
-	if [ -z $$STAGING_BUILD_NUM ]; then \
-	  docker tag $(VERSIONED_IMAGE) $(LATEST_IMAGE); \
-	  docker push $(LATEST_IMAGE); \
-	fi
-
 clean: clean-demo
 	docker-compose down
 	docker-compose rm --force
