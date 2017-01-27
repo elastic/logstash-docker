@@ -3,6 +3,7 @@ MAINTAINER Elastic Docker Team <docker@elastic.co>
 
 ARG ELASTIC_VERSION
 ARG LOGSTASH_DOWNLOAD_URL
+ARG LOGSTASH_PACK_URL
 
 # Install curl for downloading, Java for running Logstash/JRuby, and netbase
 # to resolve a warning from JRuby (https://github.com/jruby/jruby/issues/3955).
@@ -33,4 +34,7 @@ RUN chown --recursive 1000:1000 /usr/share/logstash && \
     adduser --disabled-password --gecos=logstash --uid=1000 --gid=1000 --home /usr/share/logstash logstash
 USER logstash
 
+RUN cd /usr/share/logstash && LOGSTASH_PACK_URL=${LOGSTASH_PACK_URL} logstash-plugin install x-pack
+
 CMD ["logstash", "-f", "/usr/share/logstash/pipeline/"]
+

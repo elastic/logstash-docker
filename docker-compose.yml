@@ -7,4 +7,5 @@ services:
       args:
         ELASTIC_VERSION: "${ELASTIC_VERSION}"
         LOGSTASH_DOWNLOAD_URL: "${LOGSTASH_DOWNLOAD_URL}"
+        LOGSTASH_PACK_URL: "${LOGSTASH_PACK_URL}"
     image: "${VERSIONED_IMAGE}"
