@@ -10,6 +10,7 @@ LOGSTASH_PACK_URL=https://staging.elastic.co/$(VERSION_TAG)/downloads/logstash-p
 else
 VERSION_TAG=$(ELASTIC_VERSION)
 LOGSTASH_DOWNLOAD_URL=https://artifacts.elastic.co/downloads/logstash/logstash-${ELASTIC_VERSION}.tar.gz
+LOGSTASH_PACK_URL=https://artifacts.elastic.co/downloads/logstash-plugins
 endif
 
 REGISTRY=docker.elastic.co
