@@ -10,7 +10,7 @@ Documentation can be found on the [Elastic website](https://www.elastic.co/guide
 
 ## Supported Docker versions
 
-The images have been tested on Docker 1.12.1.
+The images have been tested on Docker 1.13.0.
 
 ## Contributing, issues and testing
 
