@@ -5,6 +5,9 @@ This repository contains the official [Logstash][logstash] Docker image from
 
 Documentation can be found on the [Elastic website](https://www.elastic.co/guide/en/logstash/current/docker.html).
 
+[logstash]: https://www.elastic.co/products/logstash
+[elastic]: https://www.elastic.co/
+
 ## Supported Docker versions
 
 The images have been tested on Docker 1.12.1.
