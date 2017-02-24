@@ -7,10 +7,9 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:${VERSION_TAG}
     volumes:
-      - ./examples/elastic-stack-demo:/usr/share/logstash/pipeline
-    links:
-      - elasticsearch
-      - redis
+      - ./examples/elastic-stack-demo/:/usr/share/logstash/pipeline/
+    networks:
+      - elastic-stack
     ports:
       # Beats input -- https://www.elastic.co/guide/en/logstash/5.0/plugins-inputs-beats.html
       - '5044:5044'
@@ -23,12 +22,20 @@ services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:${VERSION_TAG}
+    networks:
+      - elastic-stack
 
   kibana:
     image: docker.elastic.co/kibana/kibana:${VERSION_TAG}
     ports: [ '5601:5601' ]
-    links: [ elasticsearch ]
+    networks:
+      - elastic-stack
 
   redis:
     image: redis
     ports: [ '6379:6379' ]
+    networks:
+      - elastic-stack
+
+networks:
+  elastic-stack:
