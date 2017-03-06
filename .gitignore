@@ -4,3 +4,5 @@ venv
 .cache
 **/__pycache__
 **.pyc
+**/env2yaml
+!/env2yaml

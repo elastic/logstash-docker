@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+env2yaml /usr/share/logstash/config/logstash.yml
+
+if [[ ${1:0:1} == '-' ]]; then
+  exec logstash $@
+else
+  exec $@
+fi

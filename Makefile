@@ -32,7 +32,10 @@ test: build
 	  py.test test/ \
 	)
 
-build:
+env2yaml:
+	make --directory=env2yaml
+
+build: env2yaml
 	echo $(LOGSTASH_DOWNLOAD_URL)
 	docker-compose build --pull
 
@@ -50,4 +53,4 @@ clean-demo:
 	docker-compose --file docker-compose.demo.yml down
 	docker-compose --file docker-compose.demo.yml rm --force
 
-.PHONY: build clean clean-demo demo push test
+.PHONY: build clean clean-demo demo push test env2yaml
