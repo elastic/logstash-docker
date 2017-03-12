@@ -27,7 +27,7 @@ export VERSION_TAG
 export PATH := ./bin:./venv/bin:$(PATH)
 
 test: venv build
-	py.test test/
+	bin/testinfra test/
 
 build:
 	echo $(LOGSTASH_DOWNLOAD_URL)
