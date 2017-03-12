@@ -14,11 +14,16 @@ Documentation can be found on the [Elastic website](https://www.elastic.co/guide
 
 The images have been tested on Docker 1.13.0.
 
+## Requirements
+A full build and test requires:
+* GNU Make
+* Go 1.8
+* Python 3.5 with Virtualenv
+
 ## Contributing, issues and testing
 
 Acceptance tests for the image are located in the `test` directory, and can
-be invoked with `make test`. Python 3.5 and virtualenv are required to run
-the tests.
+be invoked with `make test`.
 
 This image is built on [Ubuntu 16.04][ubuntu-1604].
 
