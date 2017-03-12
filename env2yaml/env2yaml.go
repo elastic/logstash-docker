@@ -42,29 +42,31 @@ func TypifyString(str string) interface{} {
 
 func main() {
 	settingsFilePath := os.Args[1]
-	conf := make(map[string]interface{})
 
-	conf_file, err := ioutil.ReadFile(settingsFilePath)
+	settingsFile, err := ioutil.ReadFile(settingsFilePath)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
 
-	err = yaml.Unmarshal(conf_file, &conf)
+	// Read the original settings file into a map.
+	settings := make(map[string]interface{})
+	err = yaml.Unmarshal(settingsFile, &settings)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
 
+	// Merge any settings found in the environment.
 	for _, line := range os.Environ() {
-		key_and_value := strings.Split(line, "=")
-		key := key_and_value[0]
+		kv := strings.Split(line, "=")
+		key := kv[0]
+		value := kv[1]
 		if strings.ContainsRune(key, '.') {
-			value := key_and_value[1]
 			log.Printf("Setting from environment '%s: %s'", key, value)
-			conf[key] = TypifyString(value)
+			settings[key] = TypifyString(value)
 		}
 	}
 
-	output, err := yaml.Marshal(&conf)
+	output, err := yaml.Marshal(&settings)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}

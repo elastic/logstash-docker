@@ -33,7 +33,7 @@ test: build
 	)
 
 env2yaml:
-	make --directory=env2yaml
+	(cd env2yaml && go build)
 
 build: env2yaml
 	echo $(LOGSTASH_DOWNLOAD_URL)
