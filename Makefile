@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 ifndef ELASTIC_VERSION
-ELASTIC_VERSION=5.2.2
+export ELASTIC_VERSION := $(shell cat version.txt)
 endif
 
 ifdef STAGING_BUILD_NUM

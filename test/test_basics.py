@@ -1,5 +1,5 @@
-from helpers import environment, stdout_of, stderr_of
-from constants import java_version_string, logstash_version_string
+from .helpers import environment, stdout_of, stderr_of
+from .constants import java_version_string, logstash_version_string
 
 
 def test_java_is_the_correct_version():

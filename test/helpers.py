@@ -1,13 +1,13 @@
 import subprocess
 import os
+from .constants import version
 
-version_tag = os.environ['ELASTIC_VERSION']
 try:
-    version_tag += '-%s' % os.environ['STAGING_BUILD_NUM']
+    version += '-%s' % os.environ['STAGING_BUILD_NUM']
 except KeyError:
     pass
 
-docker_image = 'docker.elastic.co/logstash/logstash:' + version_tag
+docker_image = 'docker.elastic.co/logstash/logstash:' + version
 
 
 def run(command):
