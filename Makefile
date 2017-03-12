@@ -24,18 +24,12 @@ export LOGSTASH_PACK_URL
 export VERSIONED_IMAGE
 export VERSION_TAG
 
-test: build
-	test -d venv || virtualenv --python=python3.5 venv
-	( \
-	  source venv/bin/activate; \
-	  pip install -r test/requirements.txt; \
-	  py.test test/ \
-	)
+export PATH := ./bin:./venv/bin:$(PATH)
 
-env2yaml:
-	(cd env2yaml && go build)
+test: venv build
+	py.test test/
 
-build: env2yaml
+build:
 	echo $(LOGSTASH_DOWNLOAD_URL)
 	docker-compose build --pull
 
@@ -45,6 +39,11 @@ demo: clean-demo
 push: build test
 	docker push $(VERSIONED_IMAGE)
 
+venv: requirements.txt
+	test -d venv || virtualenv --python=python3.5 venv
+	pip install -r requirements.txt
+	touch venv
+
 clean: clean-demo
 	docker-compose down
 	docker-compose rm --force
@@ -53,4 +52,4 @@ clean-demo:
 	docker-compose --file docker-compose.demo.yml down
 	docker-compose --file docker-compose.demo.yml rm --force
 
-.PHONY: build clean clean-demo demo push test env2yaml
+.PHONY: build clean clean-demo demo push test
