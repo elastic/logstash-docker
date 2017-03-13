@@ -4,5 +4,4 @@ venv
 .cache
 **/__pycache__
 **.pyc
-**/env2yaml
-!/env2yaml
+/build/logstash/env2yaml/env2yaml

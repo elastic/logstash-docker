@@ -29,7 +29,7 @@ export PATH := ./bin:./venv/bin:$(PATH)
 test: venv build
 	bin/testinfra test/
 
-build:
+build: env2yaml
 	echo $(LOGSTASH_DOWNLOAD_URL)
 	docker-compose build --pull
 
@@ -41,8 +41,17 @@ push: build test
 
 venv: requirements.txt
 	test -d venv || virtualenv --python=python3.5 venv
-	pip install -r requirements.txt
+	pip install -r requirements.txtd
 	touch venv
+
+# Make a Golang container that can compile our env2yaml tool.
+golang:
+	docker build -t golang:env2yaml build/golang
+
+env2yaml: golang
+	docker run --rm -it \
+	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
+	golang:env2yaml go build
 
 clean: clean-demo
 	docker-compose down
