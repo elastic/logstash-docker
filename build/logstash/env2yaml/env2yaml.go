@@ -1,3 +1,14 @@
+// env2yaml
+//
+// Merge environment variables into logstash.yml.
+// For example, running Docker with:
+//
+//   docker run -e pipeline.workers=6
+//
+// will cause logstash.yml to contain the line:
+//
+//   pipeline.workers: 6
+//
 package main
 
 import (
