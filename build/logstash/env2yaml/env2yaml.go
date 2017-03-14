@@ -31,6 +31,8 @@ func StringToIntIfPossible(str string) interface{} {
 	}
 }
 
+// If the given string can be converted to a boolan then do so, returning
+// the resulting bool. Otherwise, return the string unmodified.
 func StringToBoolIfPossible(str string) interface{} {
 	if str == "false" {
 		return false
@@ -41,6 +43,8 @@ func StringToBoolIfPossible(str string) interface{} {
 	}
 }
 
+// Try to cast string representations of int, bool to actual
+// int and bool types. This will help with YAML serialization.
 func TypifyString(str string) interface{} {
 	var typified interface{}
 	typified = StringToIntIfPossible(str)
