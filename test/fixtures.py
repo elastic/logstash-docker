@@ -1,13 +1,12 @@
-import os
-import pytest
 import json
+import pytest
+from .constants import image, container_name
 from retrying import retry
-from .constants import version, image, container_name
-from subprocess import run, PIPE
+from subprocess import run
 
 
 @pytest.fixture()
-def logstash(Process, Command, LocalCommand):
+def logstash(Process, Command):
     class Logstash:
         def __init__(self):
             self.name = container_name

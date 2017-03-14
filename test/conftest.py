@@ -1,5 +1,4 @@
 from subprocess import run
-from .fixtures import version
 from .constants import image, container_name
 
 
