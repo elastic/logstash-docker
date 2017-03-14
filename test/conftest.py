@@ -1,19 +1,12 @@
 from subprocess import run
 from .fixtures import version
-from .constants import pipeline_workers, pipeline_batch_size, pipeline_batch_delay
-
-image = 'docker.elastic.co/logstash/logstash:' + version
-container = 'logstash'
+from .constants import image, container_name
 
 
 def pytest_configure(config):
-    run(['docker', 'run', '-d', '--name', container,
-         '-e', 'pipeline.workers=%s' % str(pipeline_workers),
-         '-e', 'pipeline.batch.size=%s' % str(pipeline_batch_size),
-         '-e', 'pipeline.batch.delay=%s' % str(pipeline_batch_delay),
-         image])
+    run(['docker', 'run', '-d', '--name', container_name, image])
 
 
 def pytest_unconfigure(config):
-    run(['docker', 'kill', container])
-    run(['docker', 'rm', container])
+    run(['docker', 'kill', container_name])
+    run(['docker', 'rm', container_name])

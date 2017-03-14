@@ -1,17 +1,16 @@
-from .fixtures import node_info
-from .constants import pipeline_workers, pipeline_batch_size, pipeline_batch_delay
+from .fixtures import logstash
 
 
-def test_pipeline_workers(node_info):
-    # This setting was changed from the default by an environement variable.
-    assert node_info['pipeline']['workers'] == pipeline_workers
+def test_setting_pipeline_workers_from_environment(logstash):
+    logstash.restart(args='-e pipeline.workers=6')
+    assert logstash.get_node_info()['pipeline']['workers'] == 6
 
 
-def test_pipeline_batch_size(node_info):
-    # This setting was changed from the default by an environement variable.
-    assert node_info['pipeline']['batch_size'] == pipeline_batch_size
+def test_setting_pipeline_batch_size_from_environment(logstash):
+    logstash.restart(args='-e pipeline.batch.size=123')
+    assert logstash.get_node_info()['pipeline']['batch_size'] == 123
 
 
-def test_pipeline_batch_delay(node_info):
-    # This setting was changed from the default by an environement variable.
-    assert node_info['pipeline']['batch_delay'] == pipeline_batch_delay
+def test_setting_pipeline_batch_delay_from_environment(logstash):
+    logstash.restart(args='-e pipeline.batch.delay=36')
+    assert logstash.get_node_info()['pipeline']['batch_delay'] == 36
