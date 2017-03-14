@@ -27,7 +27,7 @@ export VERSION_TAG
 export PATH := ./bin:./venv/bin:$(PATH)
 
 test: venv build
-	bin/testinfra test/
+	bin/testinfra -v test/
 
 build: env2yaml
 	echo $(LOGSTASH_DOWNLOAD_URL)
