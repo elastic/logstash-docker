@@ -39,9 +39,10 @@ demo: clean-demo
 push: build test
 	docker push $(VERSIONED_IMAGE)
 
+# The tests are written in Python. Make a virtualenv to handle the dependencies.
 venv: requirements.txt
 	test -d venv || virtualenv --python=python3.5 venv
-	pip install -r requirements.txtd
+	pip install -r requirements.txt
 	touch venv
 
 # Make a Golang container that can compile our env2yaml tool.
@@ -51,11 +52,13 @@ golang:
 env2yaml: golang
 	docker run --rm -it \
 	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
-	golang:env2yaml go build
+	golang:env2yaml
 
 clean: clean-demo
 	docker-compose down
 	docker-compose rm --force
+	rm -f build/logstash/env2yaml/env2yaml
+	rm -rf venv
 
 clean-demo:
 	docker-compose --file docker-compose.demo.yml down
