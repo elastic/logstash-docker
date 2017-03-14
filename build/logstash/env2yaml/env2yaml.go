@@ -41,6 +41,9 @@ func TypifyString(str string) interface{} {
 }
 
 func main() {
+	if len(os.Args) != 2 {
+		log.Fatalf("usage: env2yaml FILENAME")
+	}
 	settingsFilePath := os.Args[1]
 
 	settingsFile, err := ioutil.ReadFile(settingsFilePath)
