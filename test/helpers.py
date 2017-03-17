@@ -1,18 +1,15 @@
 import subprocess
 import os
-from .constants import version
+from .constants import image, version
 
 try:
     version += '-%s' % os.environ['STAGING_BUILD_NUM']
 except KeyError:
     pass
 
-docker_image = 'docker.elastic.co/logstash/logstash:' + version
-
 
 def run(command):
-    cli = ['docker', 'run', '--rm', '--interactive', docker_image] + command.split()
-    print(' '.join(cli))
+    cli = ['docker', 'run', '--rm', '--interactive', image] + command.split()
     result = subprocess.run(cli, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     result.stdout = result.stdout.rstrip()
     return result
