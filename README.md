@@ -16,8 +16,8 @@ The images have been tested on Docker 1.13.0.
 
 ## Requirements
 A full build and test requires:
+* Docker
 * GNU Make
-* Go 1.8
 * Python 3.5 with Virtualenv
 
 ## Contributing, issues and testing
