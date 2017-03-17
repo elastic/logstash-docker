@@ -7,9 +7,9 @@ ARG LOGSTASH_PACK_URL
 
 # Install curl for downloading, Java for running Logstash/JRuby, and netbase
 # to resolve a warning from JRuby (https://github.com/jruby/jruby/issues/3955).
-RUN apt-get update && \
-    apt-get install -y curl netbase openjdk-8-jdk-headless && \
-    apt-get clean
+RUN apt-get -qq update && \
+    apt-get -qq install -y curl netbase openjdk-8-jdk-headless && \
+    apt-get -qq clean
 
 # Provide a non-root user to run the process.
 RUN addgroup --gid 1000 logstash && \
