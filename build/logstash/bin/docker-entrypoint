@@ -1,6 +1,11 @@
 #!/bin/bash -e
 
-env2yaml /usr/share/logstash/config/logstash.yml
+if [[ -n $ENV2YAML ]]; then
+  # Enable experimental mapping of environment variables to entries in
+  # logstash.yml. Note that this will mutate logstash.yml in place, which may
+  # be undesirable, especially if it is bind-mounted from the host system.
+  env2yaml /usr/share/logstash/config/logstash.yml
+fi
 
 if [[ ${1:0:1} == '-' ]]; then
   exec logstash $@
