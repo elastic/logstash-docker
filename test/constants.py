@@ -1,7 +1,5 @@
 import os
 
-java_version_string = 'openjdk version "1.8.0_121"'
-
 try:
     version = os.environ['ELASTIC_VERSION']
 except KeyError:
