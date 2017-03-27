@@ -35,14 +35,13 @@ RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
 
 # Place the startup wrapper script.
-ADD bin/logstash-docker /usr/local/bin/logstash-docker
-RUN chmod 0755 /usr/local/bin/logstash-docker
+ADD bin/docker-entrypoint /usr/local/bin/
+RUN chmod 0755 /usr/local/bin/docker-entrypoint
 
 USER logstash
 
 RUN cd /usr/share/logstash && LOGSTASH_PACK_URL=${LOGSTASH_PACK_URL} logstash-plugin install x-pack
 
 ADD env2yaml/env2yaml /usr/local/bin/
-ADD bin/docker-entrypoint /usr/local/bin/
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 CMD ["-f", "/usr/share/logstash/pipeline/"]
