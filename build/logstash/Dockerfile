@@ -26,14 +26,17 @@ ENV PATH=/usr/share/logstash/bin:$PATH
 
 # Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
-ADD config/logstash.yml /usr/share/logstash/config/
-ADD config/log4j2.properties /usr/share/logstash/config/
+ADD config/logstash.yml config/log4j2.properties /usr/share/logstash/config/
 ADD pipeline/default.conf /usr/share/logstash/pipeline/logstash.conf
 RUN chown --recursive logstash:logstash /usr/share/logstash/config/ /usr/share/logstash/pipeline/
 
 # Ensure Logstash has a UTF-8 locale available.
 RUN locale-gen en_US.UTF-8
 ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
+
+# Place the startup wrapper script.
+ADD bin/logstash-docker /usr/local/bin/logstash-docker
+RUN chmod 0755 /usr/local/bin/logstash-docker
 
 USER logstash
 
