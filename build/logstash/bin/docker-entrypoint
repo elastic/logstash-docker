@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if [[ -n $ENV2YAML ]]; then
+if [[ -n $ENV2YAML || -n $env2yaml ]]; then
   # Enable experimental mapping of environment variables to entries in
   # logstash.yml. Note that this will mutate logstash.yml in place, which may
   # be undesirable, especially if it is bind-mounted from the host system.
