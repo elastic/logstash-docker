@@ -3,11 +3,11 @@
 // Merge environment variables into logstash.yml.
 // For example, running Docker with:
 //
-//   docker run -env2yaml=1 -e pipeline.workers=6
+//   docker run -e pipeline.workers=6
 //
 // or
 //
-//   docker run -ENV2YAML=1 -e PIPELINE_WORKERS=6
+//   docker run -e PIPELINE_WORKERS=6
 //
 // will cause logstash.yml to contain the line:
 //
@@ -123,29 +123,33 @@ func main() {
 	}
 
 	// Merge any valid settings found in the environment.
+	foundNewSettings := false
 	for _, line := range os.Environ() {
 		kv := strings.Split(line, "=")
 		key := kv[0]
 		value := kv[1]
 		if isValidSetting(key) {
+			foundNewSettings = true
 			setting := normalizeSetting(key)
 			log.Printf("Setting from environment '%s: %s'", setting, value)
 			settings[setting] = TypifyString(value)
 		}
 	}
 
-	output, err := yaml.Marshal(&settings)
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
+	if foundNewSettings {
+		output, err := yaml.Marshal(&settings)
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
 
-	stat, err := os.Stat(settingsFilePath)
-	if err != nil {
-		log.Fatalf("error: %v", err)
-	}
+		stat, err := os.Stat(settingsFilePath)
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
 
-	err = ioutil.WriteFile(settingsFilePath, output, stat.Mode())
-	if err != nil {
-		log.Fatalf("error: %v", err)
+		err = ioutil.WriteFile(settingsFilePath, output, stat.Mode())
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
 	}
 }
