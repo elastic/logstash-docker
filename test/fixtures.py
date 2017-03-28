@@ -6,11 +6,12 @@ from subprocess import run
 
 
 @pytest.fixture()
-def logstash(Process, Command):
+def logstash(Process, Command, File):
     class Logstash:
         def __init__(self):
             self.name = container_name
             self.process = Process.get(comm='java')
+            self.settings_file = File('/usr/share/logstash/config/logstash.yml')
 
         def start(self, args=None):
             if args:

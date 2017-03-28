@@ -3,7 +3,11 @@
 // Merge environment variables into logstash.yml.
 // For example, running Docker with:
 //
-//   docker run -e pipeline.workers=6
+//   docker run -env2yaml=1 -e pipeline.workers=6
+//
+// or
+//
+//   docker run -ENV2YAML=1 -e PIPELINE_WORKERS=6
 //
 // will cause logstash.yml to contain the line:
 //
@@ -31,7 +35,7 @@ func StringToIntIfPossible(str string) interface{} {
 	}
 }
 
-// If the given string can be converted to a boolan then do so, returning
+// If the given string can be converted to a boolean then do so, returning
 // the resulting bool. Otherwise, return the string unmodified.
 func StringToBoolIfPossible(str string) interface{} {
 	if str == "false" {
@@ -55,6 +59,51 @@ func TypifyString(str string) interface{} {
 	return typified
 }
 
+func normalizeSetting(setting string) string {
+	downcased := strings.ToLower(setting)
+	dotted := strings.Replace(downcased, "_", ".", -1)
+	return dotted
+}
+
+func isValidSetting(setting string) bool {
+	valid_settings := []string {
+		"node.name",
+		"path.data",
+		"pipeline.workers",
+		"pipeline.output.workers",
+		"pipeline.batch.size",
+		"pipeline.batch.delay",
+		"pipeline.unsafe_shutdown",
+		"path.config",
+		"config.string",
+		"config.test_and_exit",
+		"config.reload.automatic",
+		"config.reload.interval",
+		"config.debug",
+		"queue.type",
+		"path.queue",
+		"queue.page_capacity",
+		"queue.max_events",
+		"queue.max_bytes",
+		"queue.checkpoint.acks",
+		"queue.checkpoint.writes",
+		"queue.checkpoint.interval",
+		"http.host",
+		"http.port",
+		"log.level",
+		"log.format",
+		"path.logs",
+		"path.plugins",
+	}
+
+	for _, valid_setting := range valid_settings {
+		if normalizeSetting(setting) == valid_setting {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	if len(os.Args) != 2 {
 		log.Fatalf("usage: env2yaml FILENAME")
@@ -73,14 +122,15 @@ func main() {
 		log.Fatalf("error: %v", err)
 	}
 
-	// Merge any settings found in the environment.
+	// Merge any valid settings found in the environment.
 	for _, line := range os.Environ() {
 		kv := strings.Split(line, "=")
 		key := kv[0]
 		value := kv[1]
-		if strings.ContainsRune(key, '.') {
-			log.Printf("Setting from environment '%s: %s'", key, value)
-			settings[key] = TypifyString(value)
+		if isValidSetting(key) {
+			setting := normalizeSetting(key)
+			log.Printf("Setting from environment '%s: %s'", setting, value)
+			settings[setting] = TypifyString(value)
 		}
 	}
 
