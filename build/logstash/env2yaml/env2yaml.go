@@ -94,6 +94,14 @@ func isValidSetting(setting string) bool {
 		"log.format",
 		"path.logs",
 		"path.plugins",
+		"xpack.monitoring.enabled",
+		"xpack.monitoring.collection.interval",
+		"xpack.monitoring.elasticsearch.url",
+		"xpack.monitoring.elasticsearch.username",
+    "xpack.monitoring.elasticsearch.password",
+		"xpack.monitoring.elasticsearch.ssl.ca",
+		"xpack.monitoring.elasticsearch.ssl.truststore.path",
+		"xpack.monitoring.elasticsearch.ssl.truststore.password",
 	}
 
 	for _, valid_setting := range valid_settings {

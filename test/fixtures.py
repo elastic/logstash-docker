@@ -1,4 +1,5 @@
 import json
+import yaml
 import pytest
 from .constants import image, container_name
 from retrying import retry
@@ -36,5 +37,8 @@ def logstash(Process, Command, File):
             Refer: https://www.elastic.co/guide/en/logstash/master/node-info-api.html
             """
             return json.loads(Command.check_output('curl -s http://localhost:9600/_node'))
+
+        def get_settings(self):
+            return yaml.load(self.settings_file.content_string)
 
     return Logstash()

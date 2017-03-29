@@ -22,6 +22,11 @@ def test_setting_things_with_upcased_and_underscored_env_vars(logstash):
     assert logstash.get_node_info()['pipeline']['batch_delay'] == 24
 
 
+def test_disabling_xpack_monitoring_via_environment(logstash):
+    logstash.restart(args='-e xpack.monitoring.enabled=false')
+    assert logstash.get_settings()['xpack.monitoring.enabled'] is False
+
+
 def test_invalid_settings_in_environment_are_ignored(logstash):
     logstash.restart(args='-e cheese.ftw=true')
     assert not logstash.settings_file.contains('cheese.ftw')
