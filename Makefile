@@ -50,7 +50,7 @@ golang:
 	docker build -t golang:env2yaml build/golang
 
 env2yaml: golang
-	docker run --rm -it \
+	docker run --rm -i \
 	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
 	  golang:env2yaml
 
