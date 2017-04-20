@@ -52,7 +52,7 @@ golang:
 env2yaml: golang
 	docker run --rm -it \
 	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
-	golang:env2yaml
+	  golang:env2yaml
 
 clean: clean-demo
 	docker-compose down
