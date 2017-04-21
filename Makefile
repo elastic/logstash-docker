@@ -19,7 +19,7 @@ test: venv build
 	bin/testinfra -v test/
 
 build: dockerfile env2yaml
-	docker build -t $(VERSIONED_IMAGE) build/logstash
+	docker build --pull -t $(VERSIONED_IMAGE) build/logstash
 
 demo: clean-demo
 	docker-compose --file docker-compose.demo.yml up
