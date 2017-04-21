@@ -6,3 +6,4 @@ venv
 **.pyc
 /build/logstash/env2yaml/env2yaml
 /build/logstash/Dockerfile
+/docker-compose.yml

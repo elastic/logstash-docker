@@ -15,16 +15,16 @@ REGISTRY=docker.elastic.co
 IMAGE=$(REGISTRY)/logstash/logstash
 VERSIONED_IMAGE=$(IMAGE):$(VERSION_TAG)
 
-test: venv build
+test: build
 	bin/testinfra -v test/
 
-build: dockerfile env2yaml
+build: dockerfile docker-compose.yml env2yaml
 	docker build --pull -t $(VERSIONED_IMAGE) build/logstash
 
-demo: clean-demo
-	docker-compose --file docker-compose.demo.yml up
+demo: docker-compose.yml clean-demo
+	docker-compose up
 
-push: build test
+push: test
 	docker push $(VERSIONED_IMAGE)
 
 # The tests are written in Python. Make a virtualenv to handle the dependencies.
@@ -37,11 +37,12 @@ venv: requirements.txt
 golang:
 	docker build -t golang:env2yaml build/golang
 
+# Compile "env2yaml", the helper for configuring logstash.yml via environment
+# variables.
 env2yaml: golang
 	docker run --rm -i \
 	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
 	  golang:env2yaml
-
 
 # Generate the Dockerfile from a Jinja2 template.
 dockerfile: venv templates/Dockerfile.j2
@@ -50,14 +51,18 @@ dockerfile: venv templates/Dockerfile.j2
 	  -D version_tag='$(VERSION_TAG)' \
 	  templates/Dockerfile.j2 > build/logstash/Dockerfile
 
+# Generate docker-compose.yml from a Jinja2 template.
+docker-compose.yml: venv templates/docker-compose.yml.j2
+	jinja2 \
+	  -D version_tag='$(VERSION_TAG)' \
+	  templates/docker-compose.yml.j2 > docker-compose.yml
+
 clean: clean-demo
-	docker-compose down
-	docker-compose rm --force
 	rm -f build/logstash/env2yaml/env2yaml build/logstash/Dockerfile
 	rm -rf venv
 
 clean-demo:
-	docker-compose --file docker-compose.demo.yml down
-	docker-compose --file docker-compose.demo.yml rm --force
+	docker-compose down
+	docker-compose rm --force
 
 .PHONY: build clean clean-demo demo push test
