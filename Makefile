@@ -16,7 +16,7 @@ IMAGE=$(REGISTRY)/logstash/logstash
 VERSIONED_IMAGE=$(IMAGE):$(VERSION_TAG)
 
 test: build
-	bin/testinfra -v test/
+	bin/testinfra -v tests/
 
 build: dockerfile docker-compose.yml env2yaml
 	docker build --pull -t $(VERSIONED_IMAGE) build/logstash
