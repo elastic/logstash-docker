@@ -43,5 +43,8 @@ USER logstash
 RUN cd /usr/share/logstash && LOGSTASH_PACK_URL=${LOGSTASH_PACK_URL} logstash-plugin install x-pack
 
 ADD env2yaml/env2yaml /usr/local/bin/
+
+EXPOSE 9600 5044
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint"]
 CMD ["-f", "/usr/share/logstash/pipeline/"]
