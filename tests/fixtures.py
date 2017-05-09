@@ -36,7 +36,9 @@ def logstash(Process, Command, File):
             It retries for a while, since Logstash may still be coming up.
             Refer: https://www.elastic.co/guide/en/logstash/master/node-info-api.html
             """
-            return json.loads(Command.check_output('curl -s http://localhost:9600/_node'))
+            result = json.loads(Command.check_output('curl -s http://localhost:9600/_node'))
+            assert 'workers' in result['pipeline']
+            return result
 
         def get_settings(self):
             return yaml.load(self.settings_file.content_string)
