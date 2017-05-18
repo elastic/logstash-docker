@@ -17,6 +17,11 @@ def test_setting_pipeline_batch_delay_from_environment(logstash):
     assert logstash.get_node_info()['pipeline']['batch_delay'] == 36
 
 
+def test_setting_pipeline_unsafe_shutdown_from_environment(logstash):
+    logstash.restart(args='-e pipeline.unsafe_shutdown=true')
+    assert logstash.get_settings()['pipeline.unsafe_shutdown'] == True
+
+
 def test_setting_things_with_upcased_and_underscored_env_vars(logstash):
     logstash.restart(args='-e PIPELINE_BATCH_DELAY=24')
     assert logstash.get_node_info()['pipeline']['batch_delay'] == 24

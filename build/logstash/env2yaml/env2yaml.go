@@ -61,6 +61,10 @@ func TypifyString(str string) interface{} {
 
 func normalizeSetting(setting string) string {
 	downcased := strings.ToLower(setting)
+	if setting == downcased {
+		// no uppercase characters, thus no normalisation needed
+		return setting
+	}
 	dotted := strings.Replace(downcased, "_", ".", -1)
 	return dotted
 }
