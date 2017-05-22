@@ -19,7 +19,12 @@ def test_setting_pipeline_batch_delay_from_environment(logstash):
 
 def test_setting_pipeline_unsafe_shutdown_from_environment(logstash):
     logstash.restart(args='-e pipeline.unsafe_shutdown=true')
-    assert logstash.get_settings()['pipeline.unsafe_shutdown'] == True
+    assert logstash.get_settings()['pipeline.unsafe_shutdown'] is True
+
+
+def test_setting_pipeline_unsafe_shutdown_with_shell_style_variable(logstash):
+    logstash.restart(args='-e PIPELINE_UNSAFE_SHUTDOWN=true')
+    assert logstash.get_settings()['pipeline.unsafe_shutdown'] is True
 
 
 def test_setting_things_with_upcased_and_underscored_env_vars(logstash):

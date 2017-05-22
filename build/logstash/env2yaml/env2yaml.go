@@ -16,6 +16,7 @@
 package main
 
 import (
+	"errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -59,17 +60,17 @@ func TypifyString(str string) interface{} {
 	return typified
 }
 
-func normalizeSetting(setting string) string {
+// Given a setting name, return a downcased version with delimiters removed.
+func squashSetting(setting string) string {
 	downcased := strings.ToLower(setting)
-	if setting == downcased {
-		// no uppercase characters, thus no normalisation needed
-		return setting
-	}
-	dotted := strings.Replace(downcased, "_", ".", -1)
-	return dotted
+	de_dotted := strings.Replace(downcased, ".", "", -1)
+	de_underscored := strings.Replace(de_dotted, "_", "", -1)
+	return de_underscored
 }
 
-func isValidSetting(setting string) bool {
+// Given a setting name like "pipeline.workers" or "PIPELINE_UNSAFE_SHUTDOWN",
+// return the canonical setting name. eg. 'pipeline.unsafe_shutdown'
+func normalizeSetting(setting string) (string, error)  {
 	valid_settings := []string {
 		"node.name",
 		"path.data",
@@ -109,11 +110,11 @@ func isValidSetting(setting string) bool {
 	}
 
 	for _, valid_setting := range valid_settings {
-		if normalizeSetting(setting) == valid_setting {
-			return true
+		if squashSetting(setting) == squashSetting(valid_setting) {
+			return valid_setting, nil
 		}
 	}
-	return false
+	return "", errors.New("Invalid setting: " + setting)
 }
 
 func main() {
@@ -140,9 +141,9 @@ func main() {
 		kv := strings.Split(line, "=")
 		key := kv[0]
 		value := kv[1]
-		if isValidSetting(key) {
+		setting, err := normalizeSetting(key)
+		if err == nil {
 			foundNewSettings = true
-			setting := normalizeSetting(key)
 			log.Printf("Setting from environment '%s: %s'", setting, value)
 			settings[setting] = TypifyString(value)
 		}
