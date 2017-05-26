@@ -138,7 +138,7 @@ func main() {
 	// Merge any valid settings found in the environment.
 	foundNewSettings := false
 	for _, line := range os.Environ() {
-		kv := strings.Split(line, "=")
+		kv := strings.SplitN(line, "=", 2)
 		key := kv[0]
 		value := kv[1]
 		setting, err := normalizeSetting(key)
