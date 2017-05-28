@@ -9,8 +9,8 @@ except KeyError:
 
 
 def run(command):
-    cli = ['docker', 'run', '--rm', '--interactive', image] + command.split()
-    result = subprocess.run(cli, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cli = 'docker run --rm --interactive %s %s ' % (image, command)
+    result = subprocess.run(cli, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     result.stdout = result.stdout.rstrip()
     return result
 
