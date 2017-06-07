@@ -48,7 +48,8 @@ env2yaml: golang
 dockerfile: venv templates/Dockerfile.j2
 	jinja2 \
 	  -D elastic_version='$(ELASTIC_VERSION)' \
-	  -D version_tag='$(VERSION_TAG)' \
+          -D staging_build_num='$(STAGING_BUILD_NUM)' \
+          -D version_tag='$(VERSION_TAG)' \
 	  templates/Dockerfile.j2 > build/logstash/Dockerfile
 
 # Generate docker-compose.yml from a Jinja2 template.
