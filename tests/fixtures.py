@@ -37,7 +37,7 @@ def logstash(Process, Command, File):
             Refer: https://www.elastic.co/guide/en/logstash/master/node-info-api.html
             """
             result = json.loads(Command.check_output('curl -s http://localhost:9600/_node'))
-            assert 'workers' in result['pipeline']
+            assert 'workers' in result['pipelines']['main']
             return result
 
         def get_settings(self):

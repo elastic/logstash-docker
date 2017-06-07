@@ -4,17 +4,17 @@ import time
 
 def test_setting_pipeline_workers_from_environment(logstash):
     logstash.restart(args='-e pipeline.workers=6')
-    assert logstash.get_node_info()['pipeline']['workers'] == 6
+    assert logstash.get_node_info()['pipelines']['main']['workers'] == 6
 
 
 def test_setting_pipeline_batch_size_from_environment(logstash):
     logstash.restart(args='-e pipeline.batch.size=123')
-    assert logstash.get_node_info()['pipeline']['batch_size'] == 123
+    assert logstash.get_node_info()['pipelines']['main']['batch_size'] == 123
 
 
 def test_setting_pipeline_batch_delay_from_environment(logstash):
     logstash.restart(args='-e pipeline.batch.delay=36')
-    assert logstash.get_node_info()['pipeline']['batch_delay'] == 36
+    assert logstash.get_node_info()['pipelines']['main']['batch_delay'] == 36
 
 
 def test_setting_pipeline_unsafe_shutdown_from_environment(logstash):
@@ -29,7 +29,7 @@ def test_setting_pipeline_unsafe_shutdown_with_shell_style_variable(logstash):
 
 def test_setting_things_with_upcased_and_underscored_env_vars(logstash):
     logstash.restart(args='-e PIPELINE_BATCH_DELAY=24')
-    assert logstash.get_node_info()['pipeline']['batch_delay'] == 24
+    assert logstash.get_node_info()['pipelines']['main']['batch_delay'] == 24
 
 
 def test_disabling_xpack_monitoring_via_environment(logstash):
