@@ -14,7 +14,7 @@ LABEL maintainer "Elastic Docker Team <docker@elastic.co>"
 
 # Install Java and the "which" command, which is needed by Logstash's shell
 # scripts.
-RUN yum install -y java-1.8.0-openjdk-devel which && \
+RUN yum update -y && yum install -y java-1.8.0-openjdk-devel which && \
     yum clean all
 
 # Provide a non-root user to run the process.
@@ -29,6 +29,8 @@ RUN curl -Lo - {{ url_root }}/{{ tarball }} | \
     mv /usr/share/logstash-{{ elastic_version }} /usr/share/logstash && \
     chown --recursive logstash:logstash /usr/share/logstash/ && \
     ln -s /usr/share/logstash /opt/logstash
+
+ENV ELASTIC_CONTAINER true
 ENV PATH=/usr/share/logstash/bin:$PATH
 
 # Provide a minimal configuration, so that simple invocations will provide
