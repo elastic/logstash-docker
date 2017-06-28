@@ -93,6 +93,8 @@ func normalizeSetting(setting string) (string, error)  {
 		"queue.checkpoint.acks",
 		"queue.checkpoint.writes",
 		"queue.checkpoint.interval",
+		"dead_letter_queue.enable",
+		"path.dead_letter_queue",
 		"http.host",
 		"http.port",
 		"log.level",
