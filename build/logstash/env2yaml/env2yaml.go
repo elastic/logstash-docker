@@ -109,6 +109,8 @@ func normalizeSetting(setting string) (string, error)  {
 		"xpack.monitoring.elasticsearch.ssl.ca",
 		"xpack.monitoring.elasticsearch.ssl.truststore.path",
 		"xpack.monitoring.elasticsearch.ssl.truststore.password",
+		"xpack.monitoring.elasticsearch.ssl.keystore.path",
+		"xpack.monitoring.elasticsearch.ssl.keystore.password",
 	}
 
 	for _, valid_setting := range valid_settings {
