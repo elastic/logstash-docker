@@ -1,9 +1,10 @@
 import os
+from subprocess import run, PIPE
 
 try:
     version = os.environ['ELASTIC_VERSION']
 except KeyError:
-    version = open('version.txt').read().strip()
+    version = run('./bin/elastic-version', stdout=PIPE).stdout.decode().strip()
 
 logstash_version_string = 'logstash ' + version  # eg. 'logstash 5.3.0'
 
