@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/elastic/logstash-docker.svg?branch=master)](https://travis-ci.org/elastic/logstash-docker)
-
 ## Description
 
 This repository contains the official [Logstash][logstash] Docker image from
