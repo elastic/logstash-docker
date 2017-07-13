@@ -144,7 +144,7 @@ func main() {
 		setting, err := normalizeSetting(key)
 		if err == nil {
 			foundNewSettings = true
-			log.Printf("Setting from environment '%s: %s'", setting, value)
+			log.Printf("Setting '%s' from environment.", setting)
 			settings[setting] = TypifyString(value)
 		}
 	}
