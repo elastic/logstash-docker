@@ -1,9 +1,7 @@
 SHELL=/bin/bash
 export PATH := ./bin:./venv/bin:$(PATH)
 
-ifndef ELASTIC_VERSION
-export ELASTIC_VERSION := $(shell cat version.txt)
-endif
+ELASTIC_VERSION ?= $(shell ./bin/elastic-version)
 
 ifdef STAGING_BUILD_NUM
 VERSION_TAG=$(ELASTIC_VERSION)-${STAGING_BUILD_NUM}
