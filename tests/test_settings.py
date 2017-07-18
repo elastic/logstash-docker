@@ -37,6 +37,15 @@ def test_disabling_xpack_monitoring_via_environment(logstash):
     assert logstash.get_settings()['xpack.monitoring.enabled'] is False
 
 
+def test_setting_elasticsearch_urls_as_an_array(logstash):
+    setting_string = '["http://node1:9200","http://node2:9200"]'
+    logstash.restart(args='-e xpack.monitoring.elasticsearch.url=%s' % setting_string)
+    live_setting = logstash.get_settings()['xpack.monitoring.elasticsearch.url']
+    assert type(live_setting) is list
+    assert 'http://node1:9200' in live_setting
+    assert 'http://node2:9200' in live_setting
+
+
 def test_invalid_settings_in_environment_are_ignored(logstash):
     logstash.restart(args='-e cheese.ftw=true')
     assert not logstash.settings_file.contains('cheese.ftw')

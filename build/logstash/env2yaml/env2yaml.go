@@ -21,43 +21,19 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
-// If the given string can be converted to an integer then do so, returning
-// the resulting integer. Otherwise, return the string unmodified.
-func StringToIntIfPossible(str string) interface{} {
-	intValue, err := strconv.Atoi(str)
+// If the given string can be parsed as YAML, then do so and return the
+// resulting entity. Otherwise, return the string unmodified.
+func FromYamlIfPossible(str string) interface{} {
+	var entity interface{}
+	err := yaml.Unmarshal([]byte(str), &entity)
 	if err == nil {
-		return intValue
+		return entity
 	} else {
 		return str
 	}
-}
-
-// If the given string can be converted to a boolean then do so, returning
-// the resulting bool. Otherwise, return the string unmodified.
-func StringToBoolIfPossible(str string) interface{} {
-	if str == "false" {
-		return false
-	} else if str == "true" {
-		return true
-	} else {
-		return str
-	}
-}
-
-// Try to cast string representations of int, bool to actual
-// int and bool types. This will help with YAML serialization.
-func TypifyString(str string) interface{} {
-	var typified interface{}
-	typified = StringToIntIfPossible(str)
-	if str == typified {
-		// It wasn't an int. Try bool instead.
-		typified = StringToBoolIfPossible(str)
-	}
-	return typified
 }
 
 // Given a setting name, return a downcased version with delimiters removed.
@@ -70,8 +46,8 @@ func squashSetting(setting string) string {
 
 // Given a setting name like "pipeline.workers" or "PIPELINE_UNSAFE_SHUTDOWN",
 // return the canonical setting name. eg. 'pipeline.unsafe_shutdown'
-func normalizeSetting(setting string) (string, error)  {
-	valid_settings := []string {
+func normalizeSetting(setting string) (string, error) {
+	valid_settings := []string{
 		"node.name",
 		"path.data",
 		"pipeline.workers",
@@ -149,7 +125,7 @@ func main() {
 		if err == nil {
 			foundNewSettings = true
 			log.Printf("Setting '%s' from environment.", setting)
-			settings[setting] = TypifyString(value)
+			settings[setting] = FromYamlIfPossible(value)
 		}
 	}
 
