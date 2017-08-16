@@ -1,6 +1,0 @@
-#!/bin/bash
-#
-# A wrapper for `testinfra` to handle the appropriate Docker arguments.
-
-source venv/bin/activate
-testinfra --connection=docker --hosts=logstash $@

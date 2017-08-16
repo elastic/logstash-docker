@@ -1,25 +1,48 @@
 SHELL=/bin/bash
+ELASTIC_REGISTRY=docker.elastic.co
+
 export PATH := ./bin:./venv/bin:$(PATH)
 
-ELASTIC_VERSION ?= $(shell ./bin/elastic-version)
+# Determine the version to build. Override by setting ELASTIC_VERSION env var.
+ELASTIC_VERSION := $(shell ./bin/elastic-version)
 
 ifdef STAGING_BUILD_NUM
-VERSION_TAG=$(ELASTIC_VERSION)-${STAGING_BUILD_NUM}
+  VERSION_TAG=$(ELASTIC_VERSION)-$(STAGING_BUILD_NUM)
 else
-VERSION_TAG=$(ELASTIC_VERSION)
+  VERSION_TAG=$(ELASTIC_VERSION)
 endif
 
-REGISTRY=docker.elastic.co
-IMAGE=$(REGISTRY)/logstash/logstash
-VERSIONED_IMAGE=$(IMAGE):$(VERSION_TAG)
+# Build different images tagged as :version-<flavor>
+# FIXME: basic license not available as of 6.0.0-beta1
+# IMAGE_FLAVORS ?= oss basic platinum
+IMAGE_FLAVORS ?= oss x-pack
 
-test: build
-	bin/testinfra -v tests/
+# Which image flavor will additionally receive the plain `:version` tag
+DEFAULT_IMAGE_FLAVOR ?= x-pack
 
-build: dockerfile docker-compose.yml env2yaml
-	docker build --pull -t $(VERSIONED_IMAGE) build/logstash
+VERSIONED_IMAGE := $(ELASTIC_REGISTRY)/logstash/logstash:$(VERSION_TAG)
 
-demo: docker-compose.yml clean-demo
+FIGLET := pyfiglet -w 160 -f puffy
+
+all: build test
+
+test: lint docker-compose
+	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
+	  $(FIGLET) "test: $(ELASTIC_VERSION)-$(FLAVOR)"; \
+	  ./bin/pytest tests --image-flavor=$(FLAVOR); \
+	)
+
+lint: venv
+	flake8 tests
+
+build: dockerfile docker-compose env2yaml
+	docker pull centos:7
+	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
+	  docker build -t $(VERSIONED_IMAGE)-$(FLAVOR) \
+	  -f build/logstash/Dockerfile-$(FLAVOR) build/logstash; \
+	)
+
+demo: docker-compose clean-demo
 	docker-compose up
 
 # Push the image to the dedicated push endpoint at "push.docker.elastic.co"
@@ -45,19 +68,26 @@ env2yaml: golang
 	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
 	  golang:env2yaml
 
-# Generate the Dockerfile from a Jinja2 template.
+# Generate the Dockerfiles from Jinja2 templates.
 dockerfile: venv templates/Dockerfile.j2
-	jinja2 \
-	  -D elastic_version='$(ELASTIC_VERSION)' \
-          -D staging_build_num='$(STAGING_BUILD_NUM)' \
-          -D version_tag='$(VERSION_TAG)' \
-	  templates/Dockerfile.j2 > build/logstash/Dockerfile
+	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
+	  jinja2 \
+	    -D elastic_version='$(ELASTIC_VERSION)' \
+	    -D staging_build_num='$(STAGING_BUILD_NUM)' \
+	    -D image_flavor='$(FLAVOR)' \
+	    templates/Dockerfile.j2 > build/logstash/Dockerfile-$(FLAVOR); \
+	)
 
-# Generate docker-compose.yml from a Jinja2 template.
-docker-compose.yml: venv templates/docker-compose.yml.j2
-	jinja2 \
-	  -D version_tag='$(VERSION_TAG)' \
-	  templates/docker-compose.yml.j2 > docker-compose.yml
+
+# Generate docker-compose files from Jinja2 templates.
+docker-compose: venv
+	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
+	  jinja2 \
+	    -D version_tag='$(VERSION_TAG)' \
+	    -D image_flavor='$(FLAVOR)' \
+	    templates/docker-compose.yml.j2 > docker-compose-$(FLAVOR).yml; \
+	)
+	ln -sf docker-compose-$(DEFAULT_IMAGE_FLAVOR).yml docker-compose.yml
 
 clean: clean-demo
 	rm -f build/logstash/env2yaml/env2yaml build/logstash/Dockerfile
