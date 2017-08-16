@@ -47,9 +47,15 @@ demo: docker-compose clean-demo
 
 # Push the image to the dedicated push endpoint at "push.docker.elastic.co"
 push: test
-	docker tag $(VERSIONED_IMAGE) push.$(VERSIONED_IMAGE)
-	docker push push.$(VERSIONED_IMAGE)
-	docker rmi push.$(VERSIONED_IMAGE)
+	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
+	  docker tag $(VERSIONED_IMAGE)-$(FLAVOR) push.$(VERSIONED_IMAGE)-$(FLAVOR); \
+	  docker push push.$(VERSIONED_IMAGE)-$(FLAVOR); \
+	  docker rmi push.$(VERSIONED_IMAGE)-$(FLAVOR); \
+	)
+	# Also push the default version, with no suffix like '-oss' or '-x-pack'
+	docker tag $(VERSIONED_IMAGE)-$(DEFAULT_IMAGE_FLAVOR) push.$(VERSIONED_IMAGE);
+	docker push push.$(VERSIONED_IMAGE);
+	docker rmi push.$(VERSIONED_IMAGE);
 
 # The tests are written in Python. Make a virtualenv to handle the dependencies.
 venv: requirements.txt
