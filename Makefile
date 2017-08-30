@@ -12,15 +12,10 @@ else
   VERSION_TAG=$(ELASTIC_VERSION)
 endif
 
-# Build different images tagged as :version-<flavor>
-# FIXME: basic license not available as of 6.0.0-beta1
-# IMAGE_FLAVORS ?= oss basic platinum
-IMAGE_FLAVORS ?= oss x-pack
-
-# Which image flavor will additionally receive the plain `:version` tag
+IMAGE_FLAVORS ?= x-pack
 DEFAULT_IMAGE_FLAVOR ?= x-pack
 
-VERSIONED_IMAGE := $(ELASTIC_REGISTRY)/logstash/logstash:$(VERSION_TAG)
+IMAGE_TAG := $(ELASTIC_REGISTRY)/logstash/logstash
 
 FIGLET := pyfiglet -w 160 -f puffy
 
@@ -28,7 +23,7 @@ all: build test
 
 test: lint docker-compose
 	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
-	  $(FIGLET) "test: $(ELASTIC_VERSION)-$(FLAVOR)"; \
+	  $(FIGLET) "test: $(FLAVOR)"; \
 	  ./bin/pytest tests --image-flavor=$(FLAVOR); \
 	)
 
@@ -38,8 +33,11 @@ lint: venv
 build: dockerfile docker-compose env2yaml
 	docker pull centos:7
 	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
-	  docker build -t $(VERSIONED_IMAGE)-$(FLAVOR) \
+	  docker build -t $(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG) \
 	  -f build/logstash/Dockerfile-$(FLAVOR) build/logstash; \
+	  if [[ $(FLAVOR) == $(DEFAULT_IMAGE_FLAVOR) ]]; then \
+	    docker tag $(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG) $(IMAGE_TAG):$(VERSION_TAG); \
+	  fi; \
 	)
 
 demo: docker-compose clean-demo
@@ -48,14 +46,14 @@ demo: docker-compose clean-demo
 # Push the image to the dedicated push endpoint at "push.docker.elastic.co"
 push: test
 	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
-	  docker tag $(VERSIONED_IMAGE)-$(FLAVOR) push.$(VERSIONED_IMAGE)-$(FLAVOR); \
-	  docker push push.$(VERSIONED_IMAGE)-$(FLAVOR); \
-	  docker rmi push.$(VERSIONED_IMAGE)-$(FLAVOR); \
+	  docker tag $(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG) push.$(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG); \
+	  docker push push.$(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG); \
+	  docker rmi push.$(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG); \
 	)
 	# Also push the default version, with no suffix like '-oss' or '-x-pack'
-	docker tag $(VERSIONED_IMAGE)-$(DEFAULT_IMAGE_FLAVOR) push.$(VERSIONED_IMAGE);
-	docker push push.$(VERSIONED_IMAGE);
-	docker rmi push.$(VERSIONED_IMAGE);
+	docker tag $(IMAGE_TAG):$(VERSION_TAG) push.$(IMAGE_TAG):$(VERSION_TAG);
+	docker push push.$(IMAGE_TAG):$(VERSION_TAG);
+	docker rmi push.$(IMAGE_TAG):$(VERSION_TAG);
 
 # The tests are written in Python. Make a virtualenv to handle the dependencies.
 venv: requirements.txt
@@ -80,6 +78,7 @@ dockerfile: venv templates/Dockerfile.j2
 	  jinja2 \
 	    -D elastic_version='$(ELASTIC_VERSION)' \
 	    -D staging_build_num='$(STAGING_BUILD_NUM)' \
+	    -D version_tag='$(VERSION_TAG)' \
 	    -D image_flavor='$(FLAVOR)' \
 	    templates/Dockerfile.j2 > build/logstash/Dockerfile-$(FLAVOR); \
 	)

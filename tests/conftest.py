@@ -15,7 +15,7 @@ def pytest_addoption(parser):
 
 @pytest.fixture(scope='session', autouse=True)
 def start_container():
-    image = 'docker.elastic.co/logstash/logstash:%s-%s' % (version, pytest.config.getoption('--image-flavor'))
+    image = 'docker.elastic.co/logstash/logstash-%s:%s' % (pytest.config.getoption('--image-flavor'), version)
     docker_engine.containers.run(image, name=container_name, detach=True, stdin_open=False)
 
 

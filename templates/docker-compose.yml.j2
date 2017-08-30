@@ -9,7 +9,7 @@ services:
       - elastic-stack
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:{{ version_tag }}
+    image: docker.elastic.co/elasticsearch/elasticsearch-platinum:{{ version_tag }}
     networks:
       - elastic-stack
 

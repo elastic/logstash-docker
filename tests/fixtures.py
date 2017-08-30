@@ -15,7 +15,7 @@ def logstash(host):
             self.process = host.process.get(comm='java')
             self.settings_file = host.file('/usr/share/logstash/config/logstash.yml')
             self.image_flavor = config.getoption('--image-flavor')
-            self.image = 'docker.elastic.co/logstash/logstash:%s-%s' % (version, self.image_flavor)
+            self.image = 'docker.elastic.co/logstash/logstash-%s:%s' % (self.image_flavor, version)
 
         def start(self, args=None):
             if args:
