@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-ELASTIC_REGISTRY=docker.elastic.co
+ELASTIC_REGISTRY ?= docker.elastic.co
 
 export PATH := ./bin:./venv/bin:$(PATH)
 
@@ -7,15 +7,16 @@ export PATH := ./bin:./venv/bin:$(PATH)
 ELASTIC_VERSION := $(shell ./bin/elastic-version)
 
 ifdef STAGING_BUILD_NUM
-  VERSION_TAG=$(ELASTIC_VERSION)-$(STAGING_BUILD_NUM)
+  VERSION_TAG := $(ELASTIC_VERSION)-$(STAGING_BUILD_NUM)
 else
-  VERSION_TAG=$(ELASTIC_VERSION)
+  VERSION_TAG := $(ELASTIC_VERSION)
 endif
 
 IMAGE_FLAVORS ?= x-pack
 DEFAULT_IMAGE_FLAVOR ?= x-pack
 
 IMAGE_TAG := $(ELASTIC_REGISTRY)/logstash/logstash
+HTTPD ?= logstash-docker-artifact-server
 
 FIGLET := pyfiglet -w 160 -f puffy
 
@@ -39,6 +40,26 @@ build: dockerfile docker-compose env2yaml
 	    docker tag $(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG) $(IMAGE_TAG):$(VERSION_TAG); \
 	  fi; \
 	)
+
+release-manager-snapshot: clean
+	ARTIFACTS_DIR=$(ARTIFACTS_DIR) ELASTIC_VERSION=$(ELASTIC_VERSION)-SNAPSHOT make build-from-local-artifacts
+
+release-manager-release: clean
+	ARTIFACTS_DIR=$(ARTIFACTS_DIR) ELASTIC_VERSION=$(ELASTIC_VERSION) make build-from-local-artifacts
+
+# Build from artifacts on the local filesystem, using an http server (running
+# in a container) to provide the artifacts to the Dockerfile.
+build-from-local-artifacts: venv dockerfile docker-compose
+	docker run --rm -d --name=$(HTTPD) \
+	           --network=host -v $(ARTIFACTS_DIR):/mnt \
+	           python:3 bash -c 'cd /mnt && python3 -m http.server'
+	timeout 120 bash -c 'until curl -s localhost:8000 > /dev/null; do sleep 1; done'
+	-$(foreach FLAVOR, $(IMAGE_FLAVORS), \
+	  pyfiglet -f puffy -w 160 "Building: $(FLAVOR)"; \
+	  docker build --network=host -t $(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG) -f build/logstash/Dockerfile-$(FLAVOR) build/logstash || \
+	    (docker kill $(HTTPD); false); \
+	)
+	-docker kill $(HTTPD)
 
 demo: docker-compose clean-demo
 	docker-compose up
@@ -80,6 +101,7 @@ dockerfile: venv templates/Dockerfile.j2
 	    -D staging_build_num='$(STAGING_BUILD_NUM)' \
 	    -D version_tag='$(VERSION_TAG)' \
 	    -D image_flavor='$(FLAVOR)' \
+	    -D artifacts_dir='$(ARTIFACTS_DIR)' \
 	    templates/Dockerfile.j2 > build/logstash/Dockerfile-$(FLAVOR); \
 	)
 
@@ -98,7 +120,7 @@ clean: clean-demo
 	rm -f build/logstash/env2yaml/env2yaml build/logstash/Dockerfile
 	rm -rf venv
 
-clean-demo:
+clean-demo: docker-compose
 	docker-compose down
 	docker-compose rm --force
 

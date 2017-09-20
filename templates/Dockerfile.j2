@@ -1,11 +1,15 @@
 # This Dockerfile was generated from templates/Dockerfile.j2
 {% set tarball = 'logstash-%s.tar.gz' % elastic_version -%}
-{% if staging_build_num -%}
+
+{% if artifacts_dir -%}
+{%   set url_root = 'http://localhost:8000/logstash/build/' %}
+{%   set x_pack = 'http://localhost:8000/x-pack-logstash/build/distributions/x-pack-%s.zip' % version_tag %}
+{% elif staging_build_num -%}
 {%   set url_root = 'https://staging.elastic.co/%s/downloads/logstash' % version_tag -%}
-{%   set x_pack_url = 'https://staging.elastic.co/%s/downloads/logstash-plugins' % version_tag -%}
+{%   set x_pack = 'https://staging.elastic.co/%s/downloads/logstash-plugins/x-pack/x-pack-%s.zip' % (version_tag, elastic_version) -%}
 {% else -%}
 {%   set url_root = 'https://artifacts.elastic.co/downloads/logstash' -%}
-{%   set x_pack_url = 'https://artifacts.elastic.co/downloads/logstash-plugins' -%}
+{%   set x_pack = 'x-pack' -%}
 {% endif -%}
 
 
@@ -49,7 +53,7 @@ RUN chmod 0755 /usr/local/bin/docker-entrypoint
 
 USER logstash
 {% if image_flavor != 'oss' %}
-RUN cd /usr/share/logstash && LOGSTASH_PACK_URL={{ x_pack_url }} logstash-plugin install x-pack
+RUN cd /usr/share/logstash && logstash-plugin install {{ x_pack }}
 {% endif %}
 ADD env2yaml/env2yaml /usr/local/bin/
 
