@@ -30,14 +30,17 @@ RUN curl -Lo - {{ url_root }}/{{ tarball }} | \
     chown --recursive logstash:logstash /usr/share/logstash/ && \
     ln -s /usr/share/logstash /opt/logstash
 
+WORKDIR /usr/share/logstash
+
 ENV ELASTIC_CONTAINER true
 ENV PATH=/usr/share/logstash/bin:$PATH
 
 # Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
-ADD config/logstash.yml config/log4j2.properties /usr/share/logstash/config/
-ADD pipeline/default.conf /usr/share/logstash/pipeline/logstash.conf
-RUN chown --recursive logstash:logstash /usr/share/logstash/config/ /usr/share/logstash/pipeline/
+ADD config/logstash.yml config/logstash.yml
+ADD config/log4j2.properties config/
+ADD pipeline/default.conf pipeline/logstash.conf
+RUN chown --recursive logstash:logstash config/ pipeline/
 
 # Ensure Logstash gets a UTF-8 locale by default.
 ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
