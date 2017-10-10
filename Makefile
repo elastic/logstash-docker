@@ -49,7 +49,7 @@ release-manager-release: clean
 
 # Build from artifacts on the local filesystem, using an http server (running
 # in a container) to provide the artifacts to the Dockerfile.
-build-from-local-artifacts: venv dockerfile docker-compose
+build-from-local-artifacts: venv dockerfile docker-compose env2yaml
 	docker run --rm -d --name=$(HTTPD) \
 	           --network=host -v $(ARTIFACTS_DIR):/mnt \
 	           python:3 bash -c 'cd /mnt && python3 -m http.server'
