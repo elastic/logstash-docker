@@ -12,7 +12,7 @@ else
   VERSION_TAG := $(ELASTIC_VERSION)
 endif
 
-IMAGE_FLAVORS ?= x-pack
+IMAGE_FLAVORS ?= oss x-pack
 DEFAULT_IMAGE_FLAVOR ?= x-pack
 
 IMAGE_TAG := $(ELASTIC_REGISTRY)/logstash/logstash
