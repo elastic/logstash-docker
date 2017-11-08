@@ -88,6 +88,17 @@ func normalizeSetting(setting string) (string, error) {
 		"xpack.monitoring.elasticsearch.ssl.truststore.password",
 		"xpack.monitoring.elasticsearch.ssl.keystore.path",
 		"xpack.monitoring.elasticsearch.ssl.keystore.password",
+		"xpack.management.enabled",
+		"xpack.management.logstash.poll_interval",
+		"xpack.management.pipeline.id",
+		"xpack.management.elasticsearch.url",
+		"xpack.management.elasticsearch.username",
+		"xpack.management.elasticsearch.password",
+		"xpack.management.elasticsearch.ssl.ca",
+		"xpack.management.elasticsearch.ssl.truststore.path",
+		"xpack.management.elasticsearch.ssl.truststore.password",
+		"xpack.management.elasticsearch.ssl.keystore.path",
+		"xpack.management.elasticsearch.ssl.keystore.password",
 	}
 
 	for _, valid_setting := range valid_settings {
