@@ -104,7 +104,7 @@ golang:
 # variables.
 env2yaml: golang
 	docker run --rm -i \
-	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml \
+	  -v ${PWD}/build/logstash/env2yaml:/usr/local/src/env2yaml:Z \
 	  golang:env2yaml
 
 # Generate the Dockerfiles from Jinja2 templates.
