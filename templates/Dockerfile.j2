@@ -41,6 +41,7 @@ ENV PATH=/usr/share/logstash/bin:$PATH
 
 # Provide a minimal configuration, so that simple invocations will provide
 # a good experience.
+ADD config/pipelines.yml config/pipelines.yml
 ADD config/logstash-{{ image_flavor }}.yml config/logstash.yml
 ADD config/log4j2.properties config/
 ADD pipeline/default.conf pipeline/logstash.conf
