@@ -50,6 +50,7 @@ func normalizeSetting(setting string) (string, error) {
 	valid_settings := []string{
 		"node.name",
 		"path.data",
+		"pipeline.id",
 		"pipeline.workers",
 		"pipeline.output.workers",
 		"pipeline.batch.size",
