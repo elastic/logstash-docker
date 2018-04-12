@@ -12,15 +12,15 @@ else
   VERSION_TAG := $(ELASTIC_VERSION)
 endif
 
-IMAGE_FLAVORS ?= oss x-pack
-DEFAULT_IMAGE_FLAVOR ?= x-pack
+IMAGE_FLAVORS ?= oss full
+DEFAULT_IMAGE_FLAVOR ?= full
 
 IMAGE_TAG := $(ELASTIC_REGISTRY)/logstash/logstash
 HTTPD ?= logstash-docker-artifact-server
 
 FIGLET := pyfiglet -w 160 -f puffy
 
-all: build test
+all: build
 
 test: lint docker-compose
 	$(foreach FLAVOR, $(IMAGE_FLAVORS), \
@@ -74,7 +74,7 @@ push: test
 	  docker push push.$(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG); \
 	  docker rmi push.$(IMAGE_TAG)-$(FLAVOR):$(VERSION_TAG); \
 	)
-	# Also push the default version, with no suffix like '-oss' or '-x-pack'
+	# Also push the default version, with no suffix like '-oss' or '-full'
 	docker tag $(IMAGE_TAG):$(VERSION_TAG) push.$(IMAGE_TAG):$(VERSION_TAG);
 	docker push push.$(IMAGE_TAG):$(VERSION_TAG);
 	docker rmi push.$(IMAGE_TAG):$(VERSION_TAG);
