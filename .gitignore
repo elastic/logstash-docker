@@ -7,3 +7,4 @@ venv
 /build/logstash/env2yaml/env2yaml
 /build/logstash/Dockerfile*
 /docker-compose*.yml
+/.pytest_cache

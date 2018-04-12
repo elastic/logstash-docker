@@ -4,7 +4,8 @@ from subprocess import run, PIPE
 
 version = run('./bin/elastic-version', stdout=PIPE).stdout.decode().strip()
 
-logstash_version_string = 'logstash ' + version  # eg. 'logstash 5.3.0'
+logstash_version_string = 'logstash ' + version.replace('-SNAPSHOT', '')  # eg. 'logstash 5.3.0'
+
 
 try:
     if len(os.environ['STAGING_BUILD_NUM']) > 0:
