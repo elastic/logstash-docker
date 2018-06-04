@@ -33,6 +33,9 @@ RUN curl -Lo - {{ url_root }}/{{ tarball }} | \
     tar zxf - -C /usr/share && \
     mv /usr/share/logstash-{{ elastic_version }} /usr/share/logstash && \
     chown --recursive logstash:logstash /usr/share/logstash/ && \
+    chown -R logstash:root /usr/share/logstash && \
+    chmod -R g=u /usr/share/logstash && \
+    find /usr/share/logstash -type d -exec chmod g+s {} \; && \
     ln -s /usr/share/logstash /opt/logstash
 
 WORKDIR /usr/share/logstash
@@ -46,7 +49,7 @@ ADD config/pipelines.yml config/pipelines.yml
 ADD config/logstash-{{ image_flavor }}.yml config/logstash.yml
 ADD config/log4j2.properties config/
 ADD pipeline/default.conf pipeline/logstash.conf
-RUN chown --recursive logstash:logstash config/ pipeline/
+RUN chown --recursive logstash:root config/ pipeline/
 
 # Ensure Logstash gets a UTF-8 locale by default.
 ENV LANG='en_US.UTF-8' LC_ALL='en_US.UTF-8'
