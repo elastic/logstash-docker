@@ -37,3 +37,14 @@ def test_logstash_user_is_gid_1000(logstash):
 
 def test_logging_config_does_not_log_to_files(logstash):
     assert logstash.stdout_of('grep RollingFile /logstash/config/log4j2.properties') == ''
+
+
+# REF: https://docs.openshift.com/container-platform/3.5/creating_images/guidelines.html
+def test_all_files_in_logstash_directory_are_gid_zero(logstash):
+    bad_files = logstash.stdout_of('find /usr/share/logstash ! -gid 0').split()
+    assert len(bad_files) is 0
+
+
+def test_all_directories_in_logstash_directory_are_setgid(logstash):
+    bad_dirs = logstash.stdout_of('find /usr/share/logstash -type d ! -perm /g+s').split()
+    assert len(bad_dirs) is 0
