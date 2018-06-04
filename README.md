@@ -24,8 +24,8 @@ To build an image with the latest nightly snapshot of Logstash, run:
 make from-snapshot
 ```
 
-To build an image with a released version Logstash, check out the corresponding
-branch for the version, and run Make while specifying the exact version desired.
+To build an image with a released version of Logstash, check out the corresponding
+branch for the version and run Make while specifying the exact version desired.
 Like this:
 ```
 git checkout 6.2
