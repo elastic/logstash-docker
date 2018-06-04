@@ -64,6 +64,15 @@ build-from-local-artifacts: venv dockerfile docker-compose env2yaml
 	)
 	-docker kill $(HTTPD)
 
+# Build images from the latest snapshots on snapshots.elastic.co
+from-snapshot:
+	rm -rf snapshots/
+	mkdir -p snapshots/logstash/build/
+	(cd snapshots/logstash/build/ && \
+	  wget https://snapshots.elastic.co/downloads/logstash/logstash-$(ELASTIC_VERSION)-SNAPSHOT.tar.gz && \
+	  wget https://snapshots.elastic.co/downloads/logstash/logstash-oss-$(ELASTIC_VERSION)-SNAPSHOT.tar.gz)
+	ARTIFACTS_DIR=$$PWD/snapshots make release-manager-snapshot
+
 demo: docker-compose clean-demo
 	docker-compose up
 
