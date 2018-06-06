@@ -1,4 +1,5 @@
 import json
+import os
 import yaml
 from pytest import config, fixture
 from .constants import container_name, version
@@ -11,11 +12,21 @@ from time import sleep
 def logstash(host):
     class Logstash:
         def __init__(self):
+            self.version = run('./bin/elastic-version', stdout=PIPE).stdout.decode().strip()
+            self.flavor = config.getoption('--image-flavor')
             self.name = container_name
             self.process = host.process.get(comm='java')
             self.settings_file = host.file('/usr/share/logstash/config/logstash.yml')
             self.image_flavor = config.getoption('--image-flavor')
             self.image = 'docker.elastic.co/logstash/logstash-%s:%s' % (self.image_flavor, version)
+
+            if 'STAGING_BUILD_NUM' in os.environ:
+                self.tag = '%s-%s' % (self.version, os.environ['STAGING_BUILD_NUM'])
+            else:
+                self.tag = self.version
+
+            self.docker_metadata = json.loads(
+                run(['docker', 'inspect', self.image], stdout=PIPE).stdout)[0]
 
         def start(self, args=None):
             if args:
