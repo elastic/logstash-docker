@@ -8,3 +8,4 @@ venv
 /build/logstash/Dockerfile*
 /docker-compose*.yml
 /.pytest_cache
+snapshots
