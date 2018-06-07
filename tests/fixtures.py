@@ -26,7 +26,7 @@ def logstash(host):
                 self.tag = self.version
 
             self.docker_metadata = json.loads(
-                run(['docker', 'inspect', self.image], stdout=PIPE).stdout)[0]
+                run(['docker', 'inspect', self.image], stdout=PIPE).stdout.decode())[0]
 
         def start(self, args=None):
             if args:
