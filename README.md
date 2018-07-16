@@ -23,8 +23,8 @@ To build an image with a released version of Logstash, check out the correspondi
 branch for the version and run Make while specifying the exact version desired.
 Like this:
 ```
-git checkout 6.2
-ELASTIC_VERSION=6.2.4 make
+git checkout 6.3
+ELASTIC_VERSION=6.3.1 make
 ```
 
 To build an image with the latest nightly snapshot of Logstash, run:
