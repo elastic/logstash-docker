@@ -28,6 +28,9 @@ test: lint docker-compose
 	  ./bin/pytest tests --image-flavor=$(FLAVOR); \
 	)
 
+test-snapshot:
+	ELASTIC_VERSION=$(ELASTIC_VERSION)-SNAPSHOT make test
+
 lint: venv
 	flake8 tests
 
