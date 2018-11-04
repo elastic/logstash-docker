@@ -26,6 +26,6 @@ def stderr_of(command):
 def environment(varname):
     environ = {}
     for line in run('env').stdout.decode().split("\n"):
-        var, value = line.split('=')
+        var, value = line.split('=', 1)
         environ[var] = value
     return environ[varname]
