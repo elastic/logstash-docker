@@ -12,8 +12,7 @@ from time import sleep
 def logstash(host):
     class Logstash:
         def __init__(self):
-            self.version = run('./bin/elastic-version', stdout=PIPE).stdout.decode().strip()
-            self.flavor = config.getoption('--image-flavor')
+            self.version = version
             self.name = container_name
             self.process = host.process.get(comm='java')
             self.settings_file = host.file('/usr/share/logstash/config/logstash.yml')

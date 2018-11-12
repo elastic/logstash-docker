@@ -3,8 +3,8 @@ import pytest
 from subprocess import run, PIPE
 
 version = run('./bin/elastic-version', stdout=PIPE).stdout.decode().strip()
-
-logstash_version_string = 'logstash ' + version.replace('-SNAPSHOT', '')  # eg. 'logstash 5.3.0'
+version_number = version.split('-')[0]  # '7.0.0-alpha1-SNAPSHOT' -> '7.0.0'
+logstash_version_string = 'logstash %s' % version_number  # eg. 'logstash 7.0.0'
 
 
 try:
