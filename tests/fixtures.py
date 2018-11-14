@@ -7,6 +7,11 @@ from retrying import retry
 from subprocess import run, PIPE
 from time import sleep
 
+retry_settings = {
+    'wait_fixed': 1000,
+    'stop_max_attempt_number': 60
+}
+
 
 @fixture
 def logstash(host):
@@ -42,7 +47,7 @@ def logstash(host):
             self.stop()
             self.start(args)
 
-        @retry(wait_fixed=1000, stop_max_attempt_number=60)
+        @retry(**retry_settings)
         def get_node_info(self):
             """Return the contents of Logstash's node info API.
 
@@ -71,5 +76,16 @@ def logstash(host):
                 var, value = line.split('=')
                 environ[var] = value
             return environ[varname]
+
+        def get_docker_log(self):
+            return run(['docker', 'logs', self.name], stdout=PIPE).stdout.decode()
+
+        @retry(**retry_settings)
+        def assert_in_log(self, string):
+            assert string in self.get_docker_log()
+
+        @retry(**retry_settings)
+        def assert_not_in_log(self, string):
+            assert string not in self.get_docker_log()
 
     return Logstash()
