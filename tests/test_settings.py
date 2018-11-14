@@ -1,4 +1,5 @@
 from .fixtures import logstash
+from retrying import retry
 import time
 
 
@@ -35,6 +36,16 @@ def test_setting_things_with_upcased_and_underscored_env_vars(logstash):
 def test_disabling_xpack_monitoring_via_environment(logstash):
     logstash.restart(args='-e xpack.monitoring.enabled=false')
     assert logstash.get_settings()['xpack.monitoring.enabled'] is False
+
+
+def test_enabling_java_execution_via_environment(logstash):
+    logstash.restart(args='-e pipeline.java_execution=true')
+    logstash.assert_in_log('logstash.javapipeline')
+
+
+def test_disabling_java_execution_via_environment(logstash):
+    logstash.restart(args='-e pipeline.java_execution=true')
+    logstash.assert_not_in_log('logstash.javapipeline')
 
 
 def test_setting_elasticsearch_urls_as_an_array(logstash):
