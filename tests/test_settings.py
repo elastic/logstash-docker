@@ -50,8 +50,8 @@ def test_disabling_java_execution_via_environment(logstash):
 
 def test_setting_elasticsearch_urls_as_an_array(logstash):
     setting_string = '["http://node1:9200","http://node2:9200"]'
-    logstash.restart(args='-e xpack.monitoring.elasticsearch.url=%s' % setting_string)
-    live_setting = logstash.get_settings()['xpack.monitoring.elasticsearch.url']
+    logstash.restart(args='-e xpack.monitoring.elasticsearch.hosts=%s' % setting_string)
+    live_setting = logstash.get_settings()['xpack.monitoring.elasticsearch.hosts']
     assert type(live_setting) is list
     assert 'http://node1:9200' in live_setting
     assert 'http://node2:9200' in live_setting
