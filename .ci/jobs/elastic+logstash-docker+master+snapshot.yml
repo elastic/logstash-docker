@@ -1,0 +1,6 @@
+---
+- job:
+    name: elastic+logstash-docker+master+snapshot
+    display-name: 'elastic / logstash-docker # master - snapshot'
+    description: Periodic testing of snapshot builds for the Logstash Docker master
+      branch.
