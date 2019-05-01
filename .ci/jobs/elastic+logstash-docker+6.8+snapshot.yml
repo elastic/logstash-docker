@@ -1,0 +1,11 @@
+---
+- job:
+    name: elastic+logstash-docker+6.8+snapshot
+    display-name: 'elastic / logstash-docker # 6.8 - snapshot'
+    description: Periodic testing of snapshot builds for the Logstash Docker 6.8 branch.
+    parameters:
+    - string:
+        name: branch_specifier
+        default: refs/heads/6.8
+        description: the Git branch specifier to build (&lt;branchName&gt;, &lt;tagName&gt;,
+          &lt;commitId&gt;, etc.)
